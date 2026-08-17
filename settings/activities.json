@@ -3,7 +3,7 @@
     "experimentID": "wUDI7Uy2iD8I",
     "app_name": "O-TUD",
     "version": "1.0.0",
-    "author": "John Doe",
+    "author": "Isha Aulakh",
     "language": "en",
     "instructions": true,
     "primary_redirect_url": "pages/thank-you.html",
@@ -17,7 +17,7 @@
   }, 
   "timeline": {
     "primary": {
-        "name": "Primary activity",
+        "name": "Primary activity (Isha was here)",
         "description": "",
         "mode": "single-choice",
         "min_coverage": "10",
