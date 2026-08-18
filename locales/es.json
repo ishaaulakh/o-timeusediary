@@ -58,6 +58,19 @@
     "loading": {
       "title": "Enviando tu diario...",
       "message": "Por favor espera mientras guardamos tus respuestas."
+    },
+    "mediaInfo": {
+      "title": "Información del Contenido Multimedia",
+      "ageLabel": "¿El contenido multimedia visto por tu hijo fue apropiado para:",
+      "ageOptions": {
+        "childAge": "La edad del niño",
+        "older": "Niños mayores",
+        "younger": "Niños más pequeños",
+        "adults": "Adultos",
+        "unknown": "No sé"
+      },
+      "nameLabel": "¿Cuál fue el nombre del programa multimedia (p. ej., nombre del programa o aplicación)? Si no conoces el nombre exacto, puedes dar una descripción general (p. ej., una aplicación de dibujo, una película sobre unicornios).",
+      "placeholder": "Ingresa el nombre del contenido multimedia o descripción"
     }
   },
   "messages": {

@@ -57,6 +57,19 @@
     "loading": {
       "title": "Submitting your diary...",
       "message": "Please wait while we save your responses."
+    },
+    "mediaInfo": {
+      "title": "Media Information",
+      "ageLabel": "Was the media viewed by your child appropriate for:",
+      "ageOptions": {
+        "childAge": "Child's age",
+        "older": "Older children",
+        "younger": "Younger children",
+        "adults": "Adults",
+        "unknown": "Don't know"
+      },
+      "nameLabel": "What was the name of the media program (e.g., name of the show or app)? If you don't know the exact name, you can give a general description (e.g., a drawing app, a movie about unicorns).",
+      "placeholder": "Enter media name or description"
     }
   },
   "messages": {

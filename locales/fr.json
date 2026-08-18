@@ -57,6 +57,19 @@
     "loading": {
       "title": "Soumission de votre journal...",
       "message": "Veuillez patienter pendant que nous sauvegardons vos réponses."
+    },
+    "mediaInfo": {
+      "title": "Informations sur le Contenu Multimédia",
+      "ageLabel": "Le contenu multimédia regardé par votre enfant était-il approprié pour:",
+      "ageOptions": {
+        "childAge": "L'âge de l'enfant",
+        "older": "Les enfants plus âgés",
+        "younger": "Les enfants plus jeunes",
+        "adults": "Les adultes",
+        "unknown": "Je ne sais pas"
+      },
+      "nameLabel": "Quel était le nom du programme multimédia (p. ex., nom du spectacle ou de l'application)? Si vous ne connaissez pas le nom exact, vous pouvez donner une description générale (p. ex., une application de dessin, un film sur les licornes).",
+      "placeholder": "Entrez le nom du contenu multimédia ou une description"
     }
   },
   "messages": {

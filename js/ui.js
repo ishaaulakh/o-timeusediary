@@ -334,10 +334,68 @@ function createModal() {
         </div>
     `;
 
+    // Create media information modal
+    const mediaInfoModal = document.createElement('div');
+    mediaInfoModal.className = 'modal-overlay';
+    mediaInfoModal.id = 'mediaInfoModal';
+    mediaInfoModal.innerHTML = `
+        <div class="modal">
+            <div class="modal-header">
+                <h3 data-i18n="modals.mediaInfo.title">Media Information</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="form-group">
+                    <label data-i18n="modals.mediaInfo.ageLabel">Was the media viewed by your child appropriate for:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="mediaAge" value="child">
+                            <span data-i18n="modals.mediaInfo.ageOptions.childAge">Child's age</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="mediaAge" value="older">
+                            <span data-i18n="modals.mediaInfo.ageOptions.older">Older children</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="mediaAge" value="younger">
+                            <span data-i18n="modals.mediaInfo.ageOptions.younger">Younger children</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="mediaAge" value="adults">
+                            <span data-i18n="modals.mediaInfo.ageOptions.adults">Adults</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="mediaAge" value="unknown">
+                            <span data-i18n="modals.mediaInfo.ageOptions.unknown">Don't know</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mediaNameInput" data-i18n="modals.mediaInfo.nameLabel">What was the name of the media program (e.g., name of the show or app)? If you don't know the exact name, you can give a general description (e.g., a drawing app, a movie about unicorns).</label>
+                    <input type="text" id="mediaNameInput" maxlength="100" data-i18n-placeholder="modals.mediaInfo.placeholder" placeholder="Enter media name or description">
+                </div>
+                <div class="button-container">
+                    <button id="confirmMediaInfo" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    mediaInfoModal.querySelector('.modal-close').addEventListener('click', () => {
+        mediaInfoModal.style.cssText = 'display: none !important';
+    });
+
+    mediaInfoModal.addEventListener('click', (e) => {
+        if (e.target === mediaInfoModal) {
+            mediaInfoModal.style.cssText = 'display: none !important';
+        }
+    });
+
     document.body.appendChild(activitiesModal);
     document.body.appendChild(confirmationModal);
     document.body.appendChild(loadingModal);
     document.body.appendChild(customActivityModal);
+    document.body.appendChild(mediaInfoModal);
     
     // Apply translations to the newly created modal elements
     if (window.i18n && window.i18n.isReady()) {

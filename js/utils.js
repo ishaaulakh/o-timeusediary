@@ -457,6 +457,14 @@ export function createTimelineDataFrame() {
                 endTime: activity.endTime
             };
             
+            // Add media information if present (for reading activities)
+            if (activity.mediaAge) {
+                row.mediaAge = activity.mediaAge;
+            }
+            if (activity.mediaName) {
+                row.mediaName = activity.mediaName;
+            }
+            
             // Only add study params if they exist
             if(Object.keys(studyParams).length > 0) {
                 Object.assign(row, studyParams);
@@ -523,24 +531,36 @@ export async function sendDataToDataPipe() {
       : (studyData.SESSION_ID || null);
 
     // Combine timeline and participant data
-    const combinedData = timelineData.map(row => ({
-      timelineKey: row.timelineKey,
-      activity: row.activity,
-      category: row.category,
-      startTime: row.startTime,
-      endTime: row.endTime,
-      pid: pid,
-      diaryWave: studyData.DIARY_WAVE ? parseInt(studyData.DIARY_WAVE) : null,
-      viewportWidth,
-      viewportHeight,
-      layoutHorizontal,
-      browserName: browserInfo.name,
-      browserVersion: browserInfo.version,
-      instructions: studyData.instructions === 'completed',
-      PROLIFIC_PID: studyData.PROLIFIC_PID || null,
-      STUDY_ID: studyData.STUDY_ID || null,
-      SESSION_ID: session_id
-    }));
+    const combinedData = timelineData.map(row => {
+      const dataRow = {
+        timelineKey: row.timelineKey,
+        activity: row.activity,
+        category: row.category,
+        startTime: row.startTime,
+        endTime: row.endTime,
+        pid: pid,
+        diaryWave: studyData.DIARY_WAVE ? parseInt(studyData.DIARY_WAVE) : null,
+        viewportWidth,
+        viewportHeight,
+        layoutHorizontal,
+        browserName: browserInfo.name,
+        browserVersion: browserInfo.version,
+        instructions: studyData.instructions === 'completed',
+        PROLIFIC_PID: studyData.PROLIFIC_PID || null,
+        STUDY_ID: studyData.STUDY_ID || null,
+        SESSION_ID: session_id
+      };
+      
+      // Add media information if present
+      if (row.mediaAge) {
+        dataRow.mediaAge = row.mediaAge;
+      }
+      if (row.mediaName) {
+        dataRow.mediaName = row.mediaName;
+      }
+      
+      return dataRow;
+    });
 
     // Convert to CSV format
     const csvData = convertArrayToCSV(combinedData);

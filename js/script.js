@@ -1006,6 +1006,63 @@ function renderActivities(categories, container = document.getElementById('activ
                     const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
                     const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
                     
+                    // Check if this is a reading activity that requires media information
+                    if (activity.name.toLowerCase().includes('read')) {
+                        const mediaInfoModal = document.getElementById('mediaInfoModal');
+                        if (mediaInfoModal) {
+                            // Clear previous selections
+                            document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
+                            document.getElementById('mediaNameInput').value = '';
+                            mediaInfoModal.style.display = 'block';
+                            document.getElementById('mediaNameInput').focus();
+                            
+                            // Handle media info submission
+                            const handleMediaInfo = () => {
+                                const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
+                                const mediaName = document.getElementById('mediaNameInput').value.trim();
+                                
+                                if (selectedAge && mediaName) {
+                                    categoryButtons.forEach(b => b.classList.remove('selected'));
+                                    window.selectedActivity = {
+                                        name: activity.name,
+                                        color: activity.color,
+                                        category: category.name,
+                                        mediaAge: selectedAge.value,
+                                        mediaName: mediaName
+                                    };
+                                    activityButton.classList.add('selected');
+                                    mediaInfoModal.style.display = 'none';
+                                    document.getElementById('activitiesModal').style.display = 'none';
+                                } else {
+                                    if (!selectedAge) {
+                                        window.showToast('Please select the age appropriateness of the media', 'warning');
+                                    }
+                                    if (!mediaName) {
+                                        window.showToast('Please enter the media name or description', 'warning');
+                                    }
+                                }
+                            };
+                            
+                            // Set up event listeners for media info modal
+                            const confirmBtn = document.getElementById('confirmMediaInfo');
+                            const mediaNameInput = document.getElementById('mediaNameInput');
+                            
+                            // Remove any existing listeners
+                            const newConfirmBtn = confirmBtn.cloneNode(true);
+                            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+                            
+                            // Add new listeners
+                            newConfirmBtn.addEventListener('click', handleMediaInfo);
+                            mediaNameInput.addEventListener('keypress', (e) => {
+                                if (e.key === 'Enter') {
+                                    handleMediaInfo();
+                                }
+                            });
+                            
+                            return;
+                        }
+                    }
+                    
                     // Check if this is the "other not listed" button
                     if (activity.name.toLowerCase().includes('other not listed (enter)') || 
                         activity.name.toLowerCase().includes('other time use (please specify)') ||
@@ -1217,6 +1274,63 @@ function renderActivities(categories, container = document.getElementById('activ
                     const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
                     const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
                     const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
+                    
+                    // Check if this is a reading activity that requires media information
+                    if (activity.name.toLowerCase().includes('read')) {
+                        const mediaInfoModal = document.getElementById('mediaInfoModal');
+                        if (mediaInfoModal) {
+                            // Clear previous selections
+                            document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
+                            document.getElementById('mediaNameInput').value = '';
+                            mediaInfoModal.style.display = 'block';
+                            document.getElementById('mediaNameInput').focus();
+                            
+                            // Handle media info submission
+                            const handleMediaInfo = () => {
+                                const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
+                                const mediaName = document.getElementById('mediaNameInput').value.trim();
+                                
+                                if (selectedAge && mediaName) {
+                                    categoryButtons.forEach(b => b.classList.remove('selected'));
+                                    window.selectedActivity = {
+                                        name: activity.name,
+                                        color: activity.color,
+                                        category: category.name,
+                                        mediaAge: selectedAge.value,
+                                        mediaName: mediaName
+                                    };
+                                    activityButton.classList.add('selected');
+                                    mediaInfoModal.style.display = 'none';
+                                    document.getElementById('activitiesModal').style.display = 'none';
+                                } else {
+                                    if (!selectedAge) {
+                                        window.showToast('Please select the age appropriateness of the media', 'warning');
+                                    }
+                                    if (!mediaName) {
+                                        window.showToast('Please enter the media name or description', 'warning');
+                                    }
+                                }
+                            };
+                            
+                            // Set up event listeners for media info modal
+                            const confirmBtn = document.getElementById('confirmMediaInfo');
+                            const mediaNameInput = document.getElementById('mediaNameInput');
+                            
+                            // Remove any existing listeners
+                            const newConfirmBtn = confirmBtn.cloneNode(true);
+                            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+                            
+                            // Add new listeners
+                            newConfirmBtn.addEventListener('click', handleMediaInfo);
+                            mediaNameInput.addEventListener('keypress', (e) => {
+                                if (e.key === 'Enter') {
+                                    handleMediaInfo();
+                                }
+                            });
+                            
+                            return;
+                        }
+                    }
                     
                     // Check if this is the "other not listed" button
                     if (activity.name.toLowerCase().includes('other not listed (enter)') || 
