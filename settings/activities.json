@@ -85,13 +85,23 @@
                 "color": "#dfd4fd"
               },
               {
+                "name": "Other recreation",
+                "code": 133,
+                "label": "spending time with friends, family",
+                "short": "socialise",
+                "vshort": "soc",
+                "color": "#b6cff1"
+              }
+            ]
+          },
+          {
                 "name": "Using screen media (videos, apps, chats, etc.)",
                 "code": 132,
                 "label": "using screen media",
                 "short": "screen media",
                 "vshort": "scr",
                 "color": "#f5b9ac",
-                "childItems": [
+                "activities": [
                   {
                     "name": "Watched video content (TV, movie, YouTube, etc.)",
                     "code": 132,
@@ -150,16 +160,6 @@
                   }
                 ]
               },
-              {
-                "name": "Other recreation",
-                "code": 133,
-                "label": "spending time with friends, family",
-                "short": "socialise",
-                "vshort": "soc",
-                "color": "#b6cff1"
-              }
-            ]
-          },
           {
             "name": "Other",
             "color": "#808080",
@@ -227,7 +227,7 @@
     },
     "device": {
       "name": "Device",
-      "description": "Were you using a computer/tablet/smartphone?",
+      "description": "Was an adult using a mobile device (phone, tablet, laptop) while your child was present? For example, maybe a parent was sending text messages while your child did something else in the room.",
       "mode": "multiple-choice",
       "min_coverage": "0",
       "categories": [
@@ -235,19 +235,9 @@
           "name": " ",
           "activities": [
             {
-              "name": "Computer",
+              "name": "Adult using a mobile device while child was present",
               "examples": "",
               "color": "#a8f0a8"
-            },
-            {
-              "name": "Tablet",
-              "examples": "",
-              "color": "#f0a8d7"
-            },
-            {
-              "name": "Smartphone",
-              "examples": "",
-              "color": "#a8f0ef"
             }
           ]
         }

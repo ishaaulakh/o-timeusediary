@@ -1006,8 +1006,10 @@ function renderActivities(categories, container = document.getElementById('activ
                     const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
                     const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
                     
-                    // Check if this is a reading activity that requires media information
-                    if (activity.name.toLowerCase().includes('read')) {
+                    // Check if this is a media activity that requires media information (reading, video, games)
+                    if (activity.name.toLowerCase().includes('read') || 
+                        activity.name.toLowerCase().includes('watched video') || 
+                        activity.name.toLowerCase().includes('played games')) {
                         const mediaInfoModal = document.getElementById('mediaInfoModal');
                         if (mediaInfoModal) {
                             // Clear previous selections
@@ -1275,8 +1277,10 @@ function renderActivities(categories, container = document.getElementById('activ
                     const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
                     const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
                     
-                    // Check if this is a reading activity that requires media information
-                    if (activity.name.toLowerCase().includes('read')) {
+                    // Check if this is a media activity that requires media information (reading, video, games)
+                    if (activity.name.toLowerCase().includes('read') || 
+                        activity.name.toLowerCase().includes('watched video') || 
+                        activity.name.toLowerCase().includes('played games')) {
                         const mediaInfoModal = document.getElementById('mediaInfoModal');
                         if (mediaInfoModal) {
                             // Clear previous selections
@@ -1335,7 +1339,8 @@ function renderActivities(categories, container = document.getElementById('activ
                     // Check if this is the "other not listed" button
                     if (activity.name.toLowerCase().includes('other not listed (enter)') || 
                         activity.name.toLowerCase().includes('other time use (please specify)') ||
-                        activity.name.toLowerCase().includes('other activities not listed')) {
+                        activity.name.toLowerCase().includes('other activities not listed') ||
+                        activity.name.toLowerCase().includes('other screen media use (please specify)')) {
                         // Show custom activity modal
                         const customActivityModal = document.getElementById('customActivityModal');
                         const customActivityInput = document.getElementById('customActivityInput');
