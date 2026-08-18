@@ -227,15 +227,53 @@
     },
     "device": {
       "name": "Device",
-      "description": "Was an adult using a mobile device (phone, tablet, laptop) while your child was present? For example, maybe a parent was sending text messages while your child did something else in the room.",
+      "description": "Was your child using a device during their activity?",
       "mode": "multiple-choice",
       "min_coverage": "0",
       "categories": [
         {
-          "name": " ",
+          "name": "Device",
           "activities": [
             {
-              "name": "Adult using a mobile device while child was present",
+              "name": "iPad",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "TV",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "Mobile phone",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "Computer",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "Other screen device",
+              "examples": "",
+              "color": "#a8f0a8"
+            }
+          ]
+        }
+      ]
+    },
+    "backgroundtv": {
+      "name": "Background TV",
+      "description": "Was there background TV (television left on without anyone actively watching it) during your child's activity?",
+      "mode": "multiple-choice",
+      "min_coverage": "0",
+      "categories": [
+        {
+          "name": "Background TV",
+          "activities": [
+            {
+              "name": "Yes, there was background TV.",
               "examples": "",
               "color": "#a8f0a8"
             }
@@ -243,6 +281,7 @@
         }
       ]
     }
+    
   }
 }
 

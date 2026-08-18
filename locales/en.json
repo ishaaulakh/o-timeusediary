@@ -1,7 +1,7 @@
 {
   "instructions": {
     "title": "Instructions",
-    "mainInstruction": "Think about the activities you did <span class=\"emphasis\">yesterday</span>. Then, fill in the full timeline with the activities you did.",
+    "mainInstruction": "Think about the activities your child did <span class=\"emphasis\">yesterday</span>. Then, fill in the full timeline with the activities your child did.",
     "step1": {
       "title": "Select and Place an Activity",
       "horizontal": "Choose an activity from the menu at the bottom of the screen, then place it on the timeline.",
