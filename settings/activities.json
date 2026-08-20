@@ -31,8 +31,7 @@
                 "label": "sleeping",
                 "short": "sleep",
                 "vshort": "slp",
-                "color": "#a2b4ee",
-                "childItems": []
+                "color": "#f5b9ac"
               },
               {
                 "name": "Eating/Drinking",
@@ -40,7 +39,7 @@
                 "label": "eating, drinking",
                 "short": "eat/drink",
                 "vshort": "eat",
-                "color": "#a2e0da"
+                "color": "#f5b9ac"
               },
               {
                 "name": "Other personal care",
@@ -48,7 +47,7 @@
                 "label": "washing, dressing",
                 "short": "wash/dress",
                 "vshort": "wsh",
-                "color": "#b3d6c0"
+                "color": "#f5b9ac"
               }
             ]
           },
@@ -61,7 +60,7 @@
                 "label": "School/Childcare",
                 "short": "School/Childcare",
                 "vshort": "wrk",
-                "color": "#f1dabc"
+                "color": "#9dd2f5"
               }
             ]
           },
@@ -74,7 +73,7 @@
                 "label": "Reading or listening to a story",
                 "short": "reading",
                 "vshort": "read",
-                "color": "#afe2da"
+                "color": "#dfd4fd"
               },
               {
                 "name": "Playing (indoors/outdoors)",
@@ -90,7 +89,7 @@
                 "label": "spending time with friends, family",
                 "short": "socialise",
                 "vshort": "soc",
-                "color": "#b6cff1"
+                "color": "#dfd4fd"
               }
             ]
           },
@@ -100,7 +99,7 @@
                 "label": "using screen media",
                 "short": "screen media",
                 "vshort": "scr",
-                "color": "#f5b9ac",
+                "color": "#b3d6c0",
                 "activities": [
                   {
                     "name": "Watched video content (TV, movie, YouTube, etc.)",
@@ -108,7 +107,7 @@
                     "label": "Watched video content (TV, movie, YouTube, etc.)",
                     "short": "Watch video",
                     "vshort": "vid",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   },
                   {
                     "name": "Played games (app, console game, etc.)",
@@ -116,7 +115,7 @@
                     "label": "Played games (app, console game, etc.)",
                     "short": "Play games",
                     "vshort": "gam",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   },
                   {
                     "name": "Video chat (Facetime, Zoom, etc.)",
@@ -124,7 +123,7 @@
                     "label": "Video chat (Facetime, Zoom, etc.)",
                     "short": "Video chat",
                     "vshort": "chat",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   },
                   {
                     "name": "Communicated with others in another way (talked on phone, helped to write a text message, etc.)",
@@ -132,7 +131,7 @@
                     "label": "Communicated with others in another way (talked on phone, helped to write a text message, etc.)",
                     "short": "Communicate",
                     "vshort": "com",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   },
                   {
                     "name": "Created content (recorded video, took photographs, etc.)",
@@ -140,7 +139,7 @@
                     "label": "Created content (recorded video, took photographs, etc.)",
                     "short": "Create content",
                     "vshort": "con",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   },
                   {
                     "name": "Looked up information on the internet",
@@ -148,7 +147,7 @@
                     "label": "Looked up information on the internet",
                     "short": "Look up info",
                     "vshort": "inf",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   },
                   {
                     "name": "Other screen media use (please specify)",
@@ -156,7 +155,7 @@
                     "label": "Other screen media use (please specify)",
                     "short": "Other screen media",
                     "vshort": "oth",
-                    "color": "#f5b9ac"
+                    "color": "#b3d6c0"
                   }
                 ]
               },
@@ -183,6 +182,16 @@
       "mode": "multiple-choice",
       "min_coverage": "0",
       "categories": [
+        {
+          "name": "No device",
+          "activities": [
+            {
+              "name": "No device",
+              "examples": "",
+              "color": "#cdf0a8"
+            }
+          ]
+        },
         {
           "name": "Device",
           "activities": [

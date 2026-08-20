@@ -51,7 +51,7 @@
       "titleFor": "Select an option for \"{activityName}\""
     },
     "confirmSubmit": {
-      "title": "Are you sure?",
+      "title": "Are you sure you're done?",
       "message": "You will not be able to change your responses."
     },
     "loading": {
