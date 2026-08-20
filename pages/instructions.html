@@ -113,6 +113,17 @@
             <i class="fas fa-chevron-right" aria-hidden="true"></i>
         </button>
     </nav>
+
+    <div id="typicalDayModal" class="typicalday-modal-overlay" role="presentation" aria-hidden="true">
+        <div class="typicalday-modal" role="dialog" aria-modal="true" aria-labelledby="typicalDayTitle" aria-describedby="typicalDayDescription" tabindex="-1">
+            <h2 id="typicalDayTitle" data-i18n="modals.typicalDay.title">Was yesterday a typical weekday?</h2>
+            <p id="typicalDayDescription" data-i18n="modals.typicalDay.message">An important part of this project is to find out how children spend their time during the week. Was yesterday a typical weekday for you and your child? A non-typical day would include a school closing, being on vacation, or being home sick.</p>
+            <div class="typicalday-modal-actions">
+                <button id="typicalDayYes" class="btn save-btn" data-typical-day="typical" data-i18n="modals.typicalDay.yes">Yes, yesterday was typical.</button>
+                <button id="typicalDayNo" class="btn btn-secondary" data-typical-day="non-typical" data-i18n="modals.typicalDay.no">No, yesterday was non-typical.</button>
+            </div>
+        </div>
+    </div>
     <script type="module" src="instructions.js"></script>
 </body>
 </html>

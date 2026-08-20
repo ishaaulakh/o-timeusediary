@@ -70,6 +70,12 @@
       },
       "nameLabel": "What was the name of the media (e.g., name of the book/show/app)? If you don't know the exact name, you can give a general description (e.g., a drawing app, a book about unicorns).",
       "placeholder": "Enter media name or description"
+    },
+    "typicalDay": {
+      "title": "Was yesterday a typical weekday?",
+      "message": "An important part of this project is to find out how children spend their time during the week. Was yesterday a typical weekday for you and your child? A non-typical day would include a school closing, being on vacation, or being home sick.",
+      "yes": "Yes, yesterday was typical.",
+      "no": "No, yesterday was non-typical."
     }
   },
   "messages": {

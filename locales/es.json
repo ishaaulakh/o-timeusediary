@@ -71,6 +71,12 @@
       },
       "nameLabel": "¿Cuál fue el nombre del programa multimedia (p. ej., nombre del programa o aplicación)? Si no conoces el nombre exacto, puedes dar una descripción general (p. ej., una aplicación de dibujo, una película sobre unicornios).",
       "placeholder": "Ingresa el nombre del contenido multimedia o descripción"
+    },
+    "typicalDay": {
+      "title": "¿Ayer fue un día típico entre semana?",
+      "message": "Una parte importante de este proyecto es averiguar cómo pasan su tiempo los niños durante la semana. ¿Ayer fue un día típico entre semana para ti y tu hijo? Un día no típico incluiría el cierre de la escuela, estar de vacaciones o estar enfermo en casa.",
+      "yes": "Sí, ayer fue un día típico.",
+      "no": "No, ayer fue un día no típico."
     }
   },
   "messages": {

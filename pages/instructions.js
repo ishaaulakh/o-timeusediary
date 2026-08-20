@@ -47,6 +47,8 @@ function updateLayout() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const continueBtn = document.getElementById('continueBtn');
+    const typicalDayModal = document.getElementById('typicalDayModal');
+    const typicalDayDialog = typicalDayModal?.querySelector('.typicalday-modal');
     const progressBar = document.getElementById('progressBar');
     
     // Function to create URL with preserved parameters
@@ -118,15 +120,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle start button click
     if (continueBtn) {
         console.log('Continue button found, adding click handler');
-        continueBtn.addEventListener('click', (e) => {
+        continueBtn.addEventListener('click', () => {
             console.log('Continue button clicked');
-            const targetUrl = createUrlWithParams('../index.html');
-            console.log('Redirecting to:', targetUrl);
-            window.location.href = targetUrl;
+            if (!typicalDayModal || !typicalDayDialog) return;
+
+            typicalDayModal.classList.add('is-visible');
+            typicalDayModal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+            typicalDayDialog.focus();
         });
     } else {
         console.error('Continue button not found!');
     }
+
+    typicalDayModal?.querySelectorAll('[data-typical-day]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const targetUrl = new URL(createUrlWithParams('../index.html'));
+            targetUrl.searchParams.set('typicalday', button.dataset.typicalDay);
+            console.log('Redirecting to:', targetUrl.toString());
+            window.location.href = targetUrl.toString();
+        });
+    });
 
     // Cleanup function
     function cleanup() {

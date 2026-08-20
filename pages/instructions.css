@@ -300,6 +300,75 @@ li {
     color: white;
 }
 
+.modal-open {
+    overflow: hidden;
+}
+
+.typicalday-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    background: rgba(15, 23, 42, 0.62);
+}
+
+.typicalday-modal-overlay.is-visible {
+    display: flex;
+}
+
+.typicalday-modal {
+    width: min(100%, 560px);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: clamp(24px, 5vw, 40px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: #fff;
+    box-shadow: var(--shadow-lg);
+}
+
+.typicalday-modal h2 {
+    margin: 0 0 var(--space-sm);
+    color: var(--text-color);
+    font-size: clamp(20px, 4vw, 28px);
+    line-height: 1.25;
+}
+
+.typicalday-modal p {
+    margin: 0;
+    color: var(--secondary-color);
+    line-height: 1.55;
+}
+
+.typicalday-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
+}
+
+.typicalday-modal-actions .btn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+}
+
+.typicalday-modal-actions .btn-secondary {
+    border: 1px solid var(--secondary-color);
+    background: #fff;
+    color: var(--secondary-color);
+}
+
+.typicalday-modal-actions .btn-secondary:hover {
+    background: var(--background-color);
+}
+
 .navigation button i {
     font-size: clamp(12px, 1.8vw, 14px);
 }

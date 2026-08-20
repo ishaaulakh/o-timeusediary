@@ -70,6 +70,12 @@
       },
       "nameLabel": "Quel était le nom du programme multimédia (p. ex., nom du spectacle ou de l'application)? Si vous ne connaissez pas le nom exact, vous pouvez donner une description générale (p. ex., une application de dessin, un film sur les licornes).",
       "placeholder": "Entrez le nom du contenu multimédia ou une description"
+    },
+    "typicalDay": {
+      "title": "Hier était-il un jour de semaine typique ?",
+      "message": "Une partie importante de ce projet consiste à découvrir comment les enfants passent leur temps pendant la semaine. Hier était-il un jour de semaine typique pour vous et votre enfant ? Une journée atypique peut inclure une fermeture de l'école, des vacances ou le fait d'être malade à la maison.",
+      "yes": "Oui, hier était typique.",
+      "no": "Non, hier était atypique."
     }
   },
   "messages": {
