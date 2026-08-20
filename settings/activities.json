@@ -217,7 +217,7 @@
     },
     "who": {
       "name": "Who",
-      "description": "Was anyone co-viewing the screen with your child?",
+      "description": "Who was co-viewing the screen with your child?",
       "mode": "multiple-choice",
       "min_coverage": "0",
       "categories": [
