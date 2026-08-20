@@ -454,21 +454,20 @@ export function createTimelineDataFrame() {
                 activity: activity.activity,
                 category: activity.category,
                 startTime: activity.startTime,
-                endTime: activity.endTime
+                endTime: activity.endTime,
+                mediaAge: activity.mediaAge || '',
+                mediaEducational: activity.mediaEducational || '',
+                mediaName: activity.mediaName || ''
             };
-            
-            // Add media information if present (for reading activities)
-            if (activity.mediaAge) {
-                row.mediaAge = activity.mediaAge;
-            }
-            if (activity.mediaName) {
-                row.mediaName = activity.mediaName;
-            }
             
             // Only add study params if they exist
             if(Object.keys(studyParams).length > 0) {
                 Object.assign(row, studyParams);
             }
+            delete row.typicalday;
+            row.typicalDay = studyParams.typicalday === 'typical'
+                ? 'yes'
+                : studyParams.typicalday === 'non-typical' ? 'no' : '';
             
             dataFrame.push(row);
         });
@@ -548,16 +547,12 @@ export async function sendDataToDataPipe() {
         instructions: studyData.instructions === 'completed',
         PROLIFIC_PID: studyData.PROLIFIC_PID || null,
         STUDY_ID: studyData.STUDY_ID || null,
-        SESSION_ID: session_id
+                SESSION_ID: session_id,
+                typicalDay: studyData.typicalday === 'typical' ? 'yes' : studyData.typicalday === 'non-typical' ? 'no' : ''
       };
-      
-      // Add media information if present
-      if (row.mediaAge) {
-        dataRow.mediaAge = row.mediaAge;
-      }
-      if (row.mediaName) {
-        dataRow.mediaName = row.mediaName;
-      }
+            dataRow.mediaAge = row.mediaAge || '';
+            dataRow.mediaEducational = row.mediaEducational || '';
+            dataRow.mediaName = row.mediaName || '';
       
       return dataRow;
     });

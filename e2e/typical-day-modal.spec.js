@@ -16,3 +16,4 @@ test.describe('Typical-day modal', () => {
     await expect(page).toHaveURL(/typicalday=typical/);
   });
 });
+

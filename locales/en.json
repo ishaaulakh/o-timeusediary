@@ -79,7 +79,7 @@
     },
     "typicalDay": {
       "title": "Was yesterday a typical weekday?",
-      "message": "An important part of this project is to find out how children spend their time during the week. Was yesterday a typical weekday for you and your child? A non-typical day would include a school closing, being on vacation, or being home sick.",
+      "message": "An important part of this project is to find out how children spend their time during the week. Was yesterday a typical day for you and your child? A non-typical day would include a school closing, being on vacation, or being home sick.",
       "yes": "Yes, yesterday was typical.",
       "no": "No, yesterday was non-typical."
     }

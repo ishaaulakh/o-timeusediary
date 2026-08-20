@@ -1006,14 +1006,14 @@ function renderActivities(categories, container = document.getElementById('activ
                     const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
                     const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
                     
-                    // Check if this is a media activity that requires media information (reading, video, games)
-                    if (activity.name.toLowerCase().includes('read') || 
-                        activity.name.toLowerCase().includes('watched video') || 
+                    // Check if this is a media activity that requires media information (video, games)
+                    if (activity.name.toLowerCase().includes('watched video') ||
                         activity.name.toLowerCase().includes('played games')) {
                         const mediaInfoModal = document.getElementById('mediaInfoModal');
                         if (mediaInfoModal) {
                             // Clear previous selections
                             document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
+                            document.querySelectorAll('input[name="mediaEducational"]').forEach(radio => radio.checked = false);
                             document.getElementById('mediaNameInput').value = '';
                             mediaInfoModal.style.display = 'block';
                             document.getElementById('mediaNameInput').focus();
@@ -1021,15 +1021,17 @@ function renderActivities(categories, container = document.getElementById('activ
                             // Handle media info submission
                             const handleMediaInfo = () => {
                                 const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
+                                const selectedEducational = document.querySelector('input[name="mediaEducational"]:checked');
                                 const mediaName = document.getElementById('mediaNameInput').value.trim();
                                 
-                                if (selectedAge && mediaName) {
+                                if (selectedAge && selectedEducational && mediaName) {
                                     categoryButtons.forEach(b => b.classList.remove('selected'));
                                     window.selectedActivity = {
                                         name: activity.name,
                                         color: activity.color,
                                         category: category.name,
                                         mediaAge: selectedAge.value,
+                                        mediaEducational: selectedEducational.value,
                                         mediaName: mediaName
                                     };
                                     activityButton.classList.add('selected');
@@ -1041,6 +1043,9 @@ function renderActivities(categories, container = document.getElementById('activ
                                     }
                                     if (!mediaName) {
                                         window.showToast('Please enter the media name or description', 'warning');
+                                    }
+                                    if (!selectedEducational) {
+                                        window.showToast('Please indicate whether the media was educational', 'warning');
                                     }
                                 }
                             };
@@ -1285,6 +1290,7 @@ function renderActivities(categories, container = document.getElementById('activ
                         if (mediaInfoModal) {
                             // Clear previous selections
                             document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
+                            document.querySelectorAll('input[name="mediaEducational"]').forEach(radio => radio.checked = false);
                             document.getElementById('mediaNameInput').value = '';
                             mediaInfoModal.style.display = 'block';
                             document.getElementById('mediaNameInput').focus();
@@ -1292,15 +1298,17 @@ function renderActivities(categories, container = document.getElementById('activ
                             // Handle media info submission
                             const handleMediaInfo = () => {
                                 const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
+                                const selectedEducational = document.querySelector('input[name="mediaEducational"]:checked');
                                 const mediaName = document.getElementById('mediaNameInput').value.trim();
                                 
-                                if (selectedAge && mediaName) {
+                                if (selectedAge && selectedEducational && mediaName) {
                                     categoryButtons.forEach(b => b.classList.remove('selected'));
                                     window.selectedActivity = {
                                         name: activity.name,
                                         color: activity.color,
                                         category: category.name,
                                         mediaAge: selectedAge.value,
+                                        mediaEducational: selectedEducational.value,
                                         mediaName: mediaName
                                     };
                                     activityButton.classList.add('selected');
@@ -1312,6 +1320,9 @@ function renderActivities(categories, container = document.getElementById('activ
                                     }
                                     if (!mediaName) {
                                         window.showToast('Please enter the media name or description', 'warning');
+                                    }
+                                    if (!selectedEducational) {
+                                        window.showToast('Please indicate whether the media was educational', 'warning');
                                     }
                                 }
                             };
@@ -2403,7 +2414,10 @@ function initTimelineInteraction(timeline) {
             color: selectedActivitySnapshot?.color || '#808080',
             count: parseInt(currentBlock.dataset.count) || 1,
             startMinutes,
-            endMinutes
+            endMinutes,
+            mediaAge: selectedActivitySnapshot?.mediaAge || '',
+            mediaEducational: selectedActivitySnapshot?.mediaEducational || '',
+            mediaName: selectedActivitySnapshot?.mediaName || ''
         };
 
         if (Array.isArray(selectedActivitySnapshot?.selections)) {
