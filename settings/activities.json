@@ -177,9 +177,47 @@
           }
         ]
       },
+    "device": {
+      "name": "Device",
+      "description": "Was your child using a device during their activity?",
+      "mode": "multiple-choice",
+      "min_coverage": "0",
+      "categories": [
+        {
+          "name": "Device",
+          "activities": [
+            {
+              "name": "iPad",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "TV",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "Mobile phone",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "Computer",
+              "examples": "",
+              "color": "#a8f0a8"
+            },
+            {
+              "name": "Other screen device",
+              "examples": "",
+              "color": "#a8f0a8"
+            }
+          ]
+        }
+      ]
+    },
     "who": {
       "name": "Who",
-      "description": "Who was your child with?",
+      "description": "Was anyone co-viewing the screen with your child?",
       "mode": "multiple-choice",
       "min_coverage": "0",
       "categories": [
@@ -220,44 +258,6 @@
               "name": "Another child",
               "examples": "",
               "color": "#a8e6f0"
-            }
-          ]
-        }
-      ]
-    },
-    "device": {
-      "name": "Device",
-      "description": "Was your child using a device during their activity?",
-      "mode": "multiple-choice",
-      "min_coverage": "0",
-      "categories": [
-        {
-          "name": "Device",
-          "activities": [
-            {
-              "name": "iPad",
-              "examples": "",
-              "color": "#a8f0a8"
-            },
-            {
-              "name": "TV",
-              "examples": "",
-              "color": "#a8f0a8"
-            },
-            {
-              "name": "Mobile phone",
-              "examples": "",
-              "color": "#a8f0a8"
-            },
-            {
-              "name": "Computer",
-              "examples": "",
-              "color": "#a8f0a8"
-            },
-            {
-              "name": "Other screen device",
-              "examples": "",
-              "color": "#a8f0a8"
             }
           ]
         }

@@ -69,7 +69,13 @@
         "unknown": "Don't know"
       },
       "nameLabel": "What was the name of the media (e.g., name of the book/show/app)? If you don't know the exact name, you can give a general description (e.g., a drawing app, a book about unicorns).",
-      "placeholder": "Enter media name or description"
+      "placeholder": "Enter media name or description",
+      "educationalLabel": "Was the media educational?",
+      "educationalOptions": {
+        "yes": "Yes",
+        "no": "No",
+        "unknown": "Don't know"
+      }
     },
     "typicalDay": {
       "title": "Was yesterday a typical weekday?",
