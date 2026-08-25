@@ -2133,7 +2133,8 @@ function initTimelineInteraction(timeline) {
             endMinutes,
             mediaAge: selectedActivitySnapshot?.mediaAge || '',
             mediaEducational: selectedActivitySnapshot?.mediaEducational || '',
-            mediaName: selectedActivitySnapshot?.mediaName || ''
+            mediaName: selectedActivitySnapshot?.mediaName || '',
+            backgroundTV: selectedActivitySnapshot?.backgroundTV || ''
         };
 
         if (Array.isArray(selectedActivitySnapshot?.selections)) {

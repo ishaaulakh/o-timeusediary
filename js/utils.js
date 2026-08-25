@@ -457,7 +457,8 @@ export function createTimelineDataFrame() {
                 endTime: activity.endTime,
                 mediaAge: activity.mediaAge || '',
                 mediaEducational: activity.mediaEducational || '',
-                mediaName: activity.mediaName || ''
+                mediaName: activity.mediaName || '',
+                backgroundTV: activity.backgroundTV || ''
             };
             
             // Only add study params if they exist
@@ -553,6 +554,7 @@ export async function sendDataToDataPipe() {
             dataRow.mediaAge = row.mediaAge || '';
             dataRow.mediaEducational = row.mediaEducational || '';
             dataRow.mediaName = row.mediaName || '';
+            dataRow.backgroundTV = row.backgroundTV || '';
       
       return dataRow;
     });

@@ -192,7 +192,10 @@ window.updateDisabledButtonOverlays = updateDisabledButtonOverlays;
 // Modal management
 function createModal() {
     const existingActivitiesModal = document.getElementById('activitiesModal');
-    if (existingActivitiesModal && document.getElementById('mediaInfoModal')) {
+    const requiredModalIds = ['activitiesModal', 'mediaInfoModal', 'backgroundTVModal', 'customActivityModal', 'confirmationModal', 'loadingModal'];
+    const allRequiredModalsExist = requiredModalIds.every(id => document.getElementById(id));
+
+    if (allRequiredModalsExist && existingActivitiesModal) {
         updateDisabledButtonOverlays();
         return existingActivitiesModal;
     }
@@ -251,6 +254,73 @@ function createModal() {
             }
         });
         document.body.appendChild(activitiesModal);
+    }
+
+    // --- Create Loading Modal ---
+    if (!document.getElementById('loadingModal')) {
+        const loadingModal = document.createElement('div');
+        loadingModal.className = 'modal-overlay';
+        loadingModal.id = 'loadingModal';
+        loadingModal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Submitting your diary</h3>
+                </div>
+                <div class="modal-content">
+                    <p>Please wait while your diary is being submitted.</p>
+                </div>
+            </div>`;
+        loadingModal.style.display = 'none';
+        document.body.appendChild(loadingModal);
+    }
+
+    // --- Create Confirmation Modal ---
+    if (!document.getElementById('confirmationModal')) {
+        const confirmationModal = document.createElement('div');
+        confirmationModal.className = 'modal-overlay';
+        confirmationModal.id = 'confirmationModal';
+        confirmationModal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3>Confirm Submission</h3>
+                    <button class="modal-close" aria-label="Close submission confirmation">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <p>Are you sure you want to submit your diary?</p>
+                    <div class="button-container">
+                        <button id="cancelSubmission" class="btn secondary-btn" type="button">Cancel</button>
+                        <button id="confirmSubmission" class="btn save-btn" type="button">Submit</button>
+                    </div>
+                </div>
+            </div>`;
+
+        confirmationModal.querySelector('.modal-close').addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+        confirmationModal.addEventListener('click', (e) => {
+            if (e.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+            }
+        });
+
+        const cancelSubmissionBtn = confirmationModal.querySelector('#cancelSubmission');
+        cancelSubmissionBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none';
+        });
+
+        const confirmSubmissionBtn = confirmationModal.querySelector('#confirmSubmission');
+        confirmSubmissionBtn.addEventListener('click', async () => {
+            confirmationModal.style.display = 'none';
+            showLoadingModal();
+
+            const result = await sendData({ mode: 'datapipe' });
+            if (!result?.success) {
+                hideLoadingModal();
+                showToast(result?.error || 'Submission failed. Please try again.', 'error', 4000);
+            }
+        });
+
+        document.body.appendChild(confirmationModal);
     }
 
     // --- Create Background TV Modal ---
@@ -526,7 +596,10 @@ const handleNextButtonAction = () => {
     
     if (isLastTimeline) {
         // On last timeline, show confirmation modal
-        document.getElementById('confirmationModal').style.display = 'block';
+        const confirmationModal = document.getElementById('confirmationModal');
+        if (confirmationModal) {
+            confirmationModal.style.display = 'block';
+        }
     } else {
         // For other timelines, proceed to next timeline
         addNextTimeline();
@@ -624,6 +697,13 @@ function initButtons() {
     
     const cleanRowBtn = document.getElementById('cleanRowBtn');
     const navSubmitBtn = document.getElementById('navSubmitBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            handleNextButtonAction();
+        });
+    }
 
     // Initialize the navigation submit button with proper debounce
     if (navSubmitBtn) {
