@@ -118,9 +118,9 @@
                     "color": "#b3d6c0"
                   },
                   {
-                    "name": "Video chat (Facetime, Zoom, etc.)",
+                    "name": "Video chat with a parent/other caring adult (Facetime, Zoom, etc.)",
                     "code": 132,
-                    "label": "Video chat (Facetime, Zoom, etc.)",
+                    "label": "Video chat with a parent/other caring adult (Facetime, Zoom, etc.)",
                     "short": "Video chat",
                     "vshort": "chat",
                     "color": "#b3d6c0"
@@ -226,7 +226,7 @@
     },
     "who": {
       "name": "Who",
-      "description": "Who was co-viewing the screen with your child?",
+      "description": "Who was viewing the device alongside your child?",
       "mode": "multiple-choice",
       "min_coverage": "0",
       "categories": [
@@ -282,7 +282,7 @@
           "name": "Background TV",
           "activities": [
             {
-              "name": "Yes, there was background TV.",
+              "name": "Yes, there was background TV during this time.",
               "examples": "",
               "color": "#a8f0a8"
             }

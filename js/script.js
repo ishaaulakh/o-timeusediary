@@ -1003,8 +1003,10 @@ function renderActivities(categories, container = document.getElementById('activ
                 activityButton.appendChild(textSpan);
                 activityButton.addEventListener('click', () => {
                     const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
-                    const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
-                    const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
+                    const isMultipleChoice = activitiesContainer ? activitiesContainer.getAttribute('data-mode') === 'multiple-choice' : false;
+                    const categoryButtons = activityButton.closest('.activity-category')
+                        ? activityButton.closest('.activity-category').querySelectorAll('.activity-button')
+                        : [];
                     
                     // Check if this is a media activity that requires media information (video, games)
                     if (activity.name.toLowerCase().includes('watched video') ||
@@ -1279,13 +1281,14 @@ function renderActivities(categories, container = document.getElementById('activ
                 activityButton.appendChild(textSpan);
                 activityButton.addEventListener('click', () => {
                     const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
-                    const isMultipleChoice = activitiesContainer.getAttribute('data-mode') === 'multiple-choice';
-                    const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
+                    const isMultipleChoice = activitiesContainer ? activitiesContainer.getAttribute('data-mode') === 'multiple-choice' : false;
+                    const categoryButtons = activityButton.closest('.activity-category')
+                        ? activityButton.closest('.activity-category').querySelectorAll('.activity-button')
+                        : [];
                     
                     // Check if this is a media activity that requires media information (reading, video, games)
-                    if (activity.name.toLowerCase().includes('read') || 
-                        activity.name.toLowerCase().includes('watched video') || 
-                        activity.name.toLowerCase().includes('played games')) {
+                    if (activity.name.toLowerCase().includes('watched video') || 
+                        activity.name.toLowerCase().includes('played games')){
                         const mediaInfoModal = document.getElementById('mediaInfoModal');
                         if (mediaInfoModal) {
                             // Clear previous selections
@@ -1325,21 +1328,51 @@ function renderActivities(categories, container = document.getElementById('activ
                                         window.showToast('Please indicate whether the media was educational', 'warning');
                                     }
                                 }
+                            }
+                        }
+                        };
+
+                        // Check if this is an unplugged activity that requires background TV information
+                        if (activity.name.toLowerCase().includes('nap') || 
+                        activity.name.toLowerCase().includes('eat')) {
+                        const BackgroundTVModal = document.getElementById('backgroundTVModal');
+                        if (backgroundTVModal) {
+                            // Clear previous selections
+                            document.getElementById('backgroundTVInput').value = '';
+                            backgroundTVModal.style.display = 'block';
+                            document.getElementById('backgroundTVInput').focus();
+                            
+                            // Handle background TV info submission
+                            const handleBackgroundTVInfo = () => {
+                                const backgroundTV = document.getElementById('backgroundTVInput').value.trim();
+                                
+                                if (backgroundTV) {
+                                    categoryButtons.forEach(b => b.classList.remove('selected'));
+                                    window.selectedActivity = {
+                                        name: activity.name,
+                                        color: activity.color,
+                                        category: category.name,
+                                        backgroundTV: backgroundTV
+                                    };
+                                    activityButton.classList.add('selected');
+                                    backgroundTVModal.style.display = 'none';
+                                    document.getElementById('activitiesModal').style.display = 'none';
+                                }
                             };
                             
-                            // Set up event listeners for media info modal
-                            const confirmBtn = document.getElementById('confirmMediaInfo');
-                            const mediaNameInput = document.getElementById('mediaNameInput');
+                            // Set up event listeners for background TV modal
+                            const confirmBtn = document.getElementById('confirmBackgroundTV');
+                            const backgroundTVInput = document.getElementById('backgroundTVInput');
                             
                             // Remove any existing listeners
                             const newConfirmBtn = confirmBtn.cloneNode(true);
                             confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
                             
                             // Add new listeners
-                            newConfirmBtn.addEventListener('click', handleMediaInfo);
-                            mediaNameInput.addEventListener('keypress', (e) => {
+                            newConfirmBtn.addEventListener('click', handleBackgroundTVInfo);
+                            backgroundTVInput.addEventListener('keypress', (e) => {
                                 if (e.key === 'Enter') {
-                                    handleMediaInfo();
+                                    handleBackgroundTVInfo();
                                 }
                             });
                             
@@ -1496,7 +1529,6 @@ function renderActivities(categories, container = document.getElementById('activ
                 });
                 activityButtonsDiv.appendChild(activityButton);
             });
-
             categoryDiv.appendChild(activityButtonsDiv);
             container.appendChild(categoryDiv);
         });

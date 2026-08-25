@@ -197,6 +197,7 @@ function createModal() {
         return existingActivitiesModal;
     }
     
+
     // Create custom activity input modal
     const customActivityModal = document.createElement('div');
     customActivityModal.className = 'modal-overlay';
@@ -334,6 +335,42 @@ function createModal() {
         </div>
     `;
 
+    // Create background TV modal
+    const backgroundTVModal = document.createElement('div');
+    backgroundTVModal.className = 'modal-overlay';
+    backgroundTVModal.id = 'backgroundTVModal';
+    backgroundTVModal.innerHTML = `
+        <div class="modal">
+            <div class="modal-header">
+                <h3 data-i18n="modals.backgroundTV.title">Background TV Information</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-content">
+            <div class="form-group">
+                    <label for="backgroundTVInput" data-i18n="modals.backgroundTV.nameLabel">For how many minutes was there television left on without anyone actively watching it during this activity?</label>
+                    <input type="text" id="backgroundTVInput" maxlength="100" data-i18n-placeholder="modals.backgroundTV.placeholder" placeholder="Enter minutes">
+                </div>
+            </div>
+                <div class="button-container">
+                    <button id="confirmBackgroundTV" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+                </div>
+        </div>
+    `;
+
+    
+    backgroundTVModal.querySelector('.modal-close').addEventListener('click', () => {
+        backgroundTVModal.style.cssText = 'display: none !important';
+    });
+
+    backgroundTVModal.addEventListener('click', (e) => {
+        if (e.target === backgroundTVModal) {
+            backgroundTVModal.style.cssText = 'display: none !important';
+        }
+    });
+
+    document.body.appendChild(backgroundTVModal);
+    
+    return activitiesModal;
     // Create media information modal
     const mediaInfoModal = document.createElement('div');
     mediaInfoModal.className = 'modal-overlay';
