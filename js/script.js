@@ -903,6 +903,10 @@ function renderChildItems(activity, categoryName) {
             button.textContent = childItem.name;
             button.style.setProperty('--color', childItem.color || activity.color);
             
+            // Remove any existing listeners
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
             button.addEventListener('click', () => {
                 // Use parent activity properties but with child item name
                 window.selectedActivity = {
@@ -945,592 +949,272 @@ function renderActivities(categories, container = document.getElementById('activ
     const isMobile = getIsMobile();
     const isModal = container.id === 'modalActivitiesContainer';
 
-    // Only create accordion if this is the modal container and in mobile view
-    if (isMobile && isModal) {
-        const accordionContainer = document.createElement('div');
-        accordionContainer.className = 'activities-accordion';
-        // Set data-mode attribute to match current timeline's mode
-        const currentKey = getCurrentTimelineKey();
-        if (currentKey && window.timelineManager.metadata[currentKey]) {
-            accordionContainer.setAttribute('data-mode', window.timelineManager.metadata[currentKey].mode);
-        }
+    // Helper to setup button click logic for both mobile and desktop view
+    const attachActivityClickListener = (activityButton, activity, category) => {
+        activityButton.addEventListener('click', () => {
+            const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
+            const isMultipleChoice = activitiesContainer?.getAttribute('data-mode') === 'multiple-choice';
+            const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
+            const actNameLower = activity.name.toLowerCase();
 
-        categories.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'activity-category';
+            // 1. Media Info Modal (video / games)
+            if (actNameLower.includes('watched video') || actNameLower.includes('played games')) {
+                const mediaInfoModal = document.getElementById('mediaInfoModal');
+                if (mediaInfoModal) {
+                    document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
+                    document.querySelectorAll('input[name="mediaEducational"]').forEach(radio => radio.checked = false);
+                    const mediaInput = document.getElementById('mediaNameInput');
+                    if (mediaInput) mediaInput.value = '';
 
-            const categoryTitle = document.createElement('h3');
-            categoryTitle.textContent = category.name;
-            categoryDiv.appendChild(categoryTitle);
+                    mediaInfoModal.style.display = 'block';
+                    if (mediaInput) mediaInput.focus();
 
-            const activityButtonsDiv = document.createElement('div');
-            activityButtonsDiv.className = 'activity-buttons';
+                    const handleMediaInfo = () => {
+                        const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
+                        const selectedEducational = document.querySelector('input[name="mediaEducational"]:checked');
+                        const mediaName = mediaInput ? mediaInput.value.trim() : '';
 
-            category.activities.forEach(activity => {
-                const activityButton = document.createElement('button');
-                const isMultipleChoice = container.getAttribute('data-mode') === 'multiple-choice';
-                activityButton.className = `activity-button ${isMultipleChoice ? 'checkbox-style' : ''}`;
-                // Add indicator class if activity has child items
-                if (activity.childItems && activity.childItems.length > 0) {
-                    activityButton.classList.add('has-child-items');
-                }
-                
-                activityButton.style.setProperty('--color', activity.color);
-                
-                if (isMultipleChoice) {
-                    const checkmark = document.createElement('span');
-                    checkmark.className = 'checkmark';
-                    activityButton.appendChild(checkmark);
-                }
-                
-                const textSpan = document.createElement('span');
-                textSpan.className = 'activity-text';
-                
-                // Create name span
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'activity-name';
-                nameSpan.textContent = activity.name;
-                textSpan.appendChild(nameSpan);
-                
-                // Add examples if they exist
-                if (activity.examples) {
-                    const examplesSpan = document.createElement('span');
-                    examplesSpan.className = 'activity-examples';
-                    examplesSpan.textContent = activity.examples;
-                    textSpan.appendChild(examplesSpan);
-                }
-                
-                activityButton.appendChild(textSpan);
-                activityButton.addEventListener('click', () => {
-                    const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
-                    const isMultipleChoice = activitiesContainer ? activitiesContainer.getAttribute('data-mode') === 'multiple-choice' : false;
-                    const categoryButtons = activityButton.closest('.activity-category')
-                        ? activityButton.closest('.activity-category').querySelectorAll('.activity-button')
-                        : [];
-                    
-                    // Check if this is a media activity that requires media information (video, games)
-                    if (activity.name.toLowerCase().includes('watched video') ||
-                        activity.name.toLowerCase().includes('played games')) {
-                        const mediaInfoModal = document.getElementById('mediaInfoModal');
-                        if (mediaInfoModal) {
-                            // Clear previous selections
-                            document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
-                            document.querySelectorAll('input[name="mediaEducational"]').forEach(radio => radio.checked = false);
-                            document.getElementById('mediaNameInput').value = '';
-                            mediaInfoModal.style.display = 'block';
-                            document.getElementById('mediaNameInput').focus();
-                            
-                            // Handle media info submission
-                            const handleMediaInfo = () => {
-                                const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
-                                const selectedEducational = document.querySelector('input[name="mediaEducational"]:checked');
-                                const mediaName = document.getElementById('mediaNameInput').value.trim();
-                                
-                                if (selectedAge && selectedEducational && mediaName) {
-                                    categoryButtons.forEach(b => b.classList.remove('selected'));
-                                    window.selectedActivity = {
-                                        name: activity.name,
-                                        color: activity.color,
-                                        category: category.name,
-                                        mediaAge: selectedAge.value,
-                                        mediaEducational: selectedEducational.value,
-                                        mediaName: mediaName
-                                    };
-                                    activityButton.classList.add('selected');
-                                    mediaInfoModal.style.display = 'none';
-                                    document.getElementById('activitiesModal').style.display = 'none';
-                                } else {
-                                    if (!selectedAge) {
-                                        window.showToast('Please select the age appropriateness of the media', 'warning');
-                                    }
-                                    if (!mediaName) {
-                                        window.showToast('Please enter the media name or description', 'warning');
-                                    }
-                                    if (!selectedEducational) {
-                                        window.showToast('Please indicate whether the media was educational', 'warning');
-                                    }
-                                }
+                        if (selectedAge && selectedEducational && mediaName) {
+                            categoryButtons.forEach(b => b.classList.remove('selected'));
+                            window.selectedActivity = {
+                                name: activity.name,
+                                color: activity.color,
+                                category: category.name,
+                                mediaAge: selectedAge.value,
+                                mediaEducational: selectedEducational.value,
+                                mediaName: mediaName
                             };
-                            
-                            // Set up event listeners for media info modal
-                            const confirmBtn = document.getElementById('confirmMediaInfo');
-                            const mediaNameInput = document.getElementById('mediaNameInput');
-                            
-                            // Remove any existing listeners
-                            const newConfirmBtn = confirmBtn.cloneNode(true);
-                            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-                            
-                            // Add new listeners
-                            newConfirmBtn.addEventListener('click', handleMediaInfo);
-                            mediaNameInput.addEventListener('keypress', (e) => {
-                                if (e.key === 'Enter') {
-                                    handleMediaInfo();
-                                }
-                            });
-                            
-                            return;
+                            activityButton.classList.add('selected');
+                            mediaInfoModal.style.display = 'none';
+                            const actModal = document.getElementById('activitiesModal');
+                            if (actModal) actModal.style.display = 'none';
+                        } else {
+                            if (!selectedAge && window.showToast) window.showToast('Please select age appropriateness', 'warning');
+                            if (!mediaName && window.showToast) window.showToast('Please enter media name', 'warning');
+                            if (!selectedEducational && window.showToast) window.showToast('Please indicate if educational', 'warning');
                         }
-                    }
-                    
-                    // Check if this is the "other not listed" button
-                    if (activity.name.toLowerCase().includes('other not listed (enter)') || 
-                        activity.name.toLowerCase().includes('other time use (please specify)') ||
-                        activity.name.toLowerCase().includes('other activities not listed')) {
-                        // Show custom activity modal
-                        const customActivityModal = document.getElementById('customActivityModal');
-                        const customActivityInput = document.getElementById('customActivityInput');
-                        customActivityInput.value = ''; // Clear previous input
-                        customActivityModal.style.display = 'block';
-                        customActivityInput.focus(); // Focus the input field
-                        
-                        // Handle custom activity submission
-                        const handleCustomActivity = () => {
-                            const customText = customActivityInput.value.trim();
-                            if (customText) {
-                                if (isMultipleChoice) {
-                                    activityButton.classList.add('selected');
-                                    const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
-                                    window.selectedActivity = {
-                                        name: btn === activityButton ? customText : btn.querySelector('.activity-text').textContent,
-                                        color: btn.style.getPropertyValue('--color')
-                                    };
-                                } else {
-                                    categoryButtons.forEach(b => b.classList.remove('selected'));
-                                    window.selectedActivity = {
-                                        name: customText,
-                                        color: activityButton.style.getPropertyValue('--color'),
-                                        category: category.name
-                                    };
-                                    activityButton.classList.add('selected');
-                                }
-                                customActivityModal.style.display = 'none';
-                                document.getElementById('activitiesModal').style.display = 'none';
-                            }
-                        };
+                    };
 
-                        // Set up event listeners for custom activity modal
-                        const confirmBtn = document.getElementById('confirmCustomActivity');
-                        const inputField = document.getElementById('customActivityInput');
-                        
-                        // Remove any existing listeners
+                    const confirmBtn = document.getElementById('confirmMediaInfo');
+                    if (confirmBtn && mediaInput) {
                         const newConfirmBtn = confirmBtn.cloneNode(true);
                         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-                        
-                        // Add new listeners
-                        newConfirmBtn.addEventListener('click', handleCustomActivity);
-                        inputField.addEventListener('keypress', (e) => {
-                            if (e.key === 'Enter') {
-                                handleCustomActivity();
-                            }
-                        });
-                        
-                        return;
+                        newConfirmBtn.addEventListener('click', handleMediaInfo);
+                        mediaInput.onkeypress = (e) => { if (e.key === 'Enter') handleMediaInfo(); };
                     }
-                    
-                    // Check if activity has child items
-                    if (activity.childItems && activity.childItems.length > 0) {
-                        categoryButtons.forEach(b => b.classList.remove('selected'));
-                        activityButton.classList.add('selected');
-                        
-                        // Show child items modal
-                        renderChildItems(activity, category.name);
-                        return;
-                    }
-                    
-                    if (isMultipleChoice) {
-                        // Toggle selection for this button
-                        activityButton.classList.toggle('selected');
-            
-                        // Get all selected activities in this category
-                        const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
-            
-                        if (selectedButtons.length > 0) {
-                            window.selectedActivity = {
-                                selections: selectedButtons.map(btn => ({
-                                    name: btn.textContent,
-                                    color: btn.style.getPropertyValue('--color')
-                                })),
-                                category: category.name
-                            };
-                        } else {
-                            // Only clear window.selectedActivity in multiple-choice mode if user actively deselected
-                            // Don't clear if we're in a modal that's about to close
-                            const isInModal = activityButton.closest('#modalActivitiesContainer');
-                            if (!isInModal) {
-                                console.log('[ACTIVITY] Clearing window.selectedActivity - not in modal');
-                                window.selectedActivity = null;
-                            } else {
-                                console.log('[ACTIVITY] NOT clearing window.selectedActivity - in modal');
-                            }
-                        }
-                    } else {
-                        // Single choice mode
-                        categoryButtons.forEach(b => b.classList.remove('selected'));
-                        window.selectedActivity = {
-                            name: activity.name,
-                            color: activity.color,
-                            category: category.name
-                        };
-                        console.log('[ACTIVITY] Selected activity:', window.selectedActivity);
-                        activityButton.classList.add('selected');
-                    }
-                    // Only close modal in single-choice mode
-                    if (!isMultipleChoice) {
-                        // Store the selected activity before closing modal to prevent it from being cleared
-                        const preservedActivity = window.selectedActivity;
-                        
-                        // Force close modals with a slight delay on mobile
-                        if (getIsMobile()) {
-                            setTimeout(() => {
-                                const activitiesModal = document.getElementById('activitiesModal');
-                                const customActivityModal = document.getElementById('customActivityModal');
-                                if (activitiesModal) {
-                                    activitiesModal.style.cssText = 'display: none !important';
-                                }
-                                if (customActivityModal) {
-                                    customActivityModal.style.cssText = 'display: none !important';
-                                }
-                                // Restore window.selectedActivity after modal closes in case it was cleared
-                                if (preservedActivity && !window.selectedActivity) {
-                                    window.selectedActivity = preservedActivity;
-                                    console.log('[MODAL] Restored window.selectedActivity:', window.selectedActivity);
-                                } else {
-                                    console.log('[MODAL] window.selectedActivity after close:', window.selectedActivity);
-                                }
-                            }, 50);
-                        } else {
-                            // Immediate close on desktop
-                            const activitiesModal = document.getElementById('activitiesModal');
-                            const customActivityModal = document.getElementById('customActivityModal');
-                            if (activitiesModal) {
-                                activitiesModal.style.cssText = 'display: none !important';
-                            }
-                            if (customActivityModal) {
-                                customActivityModal.style.cssText = 'display: none !important';
-                            }
-                            // Restore window.selectedActivity after modal closes in case it was cleared
-                            if (preservedActivity && !window.selectedActivity) {
-                                window.selectedActivity = preservedActivity;
-                            }
-                        }
-                    }
-                });
-                activityButtonsDiv.appendChild(activityButton);
-            });
+                    return;
+                }
+            }
 
-            categoryDiv.appendChild(activityButtonsDiv);
-            accordionContainer.appendChild(categoryDiv);
+            // 2. Background TV Modal (nap / eat)
+            if (actNameLower.includes('nap') || actNameLower.includes('eat')) {
+                const backgroundTVModal = document.getElementById('backgroundTVModal');
+                if (backgroundTVModal) {
+                    const tvInput = document.getElementById('backgroundTVInput');
+                    if (tvInput) tvInput.value = '';
+                    backgroundTVModal.style.display = 'block';
+                    if (tvInput) tvInput.focus();
+
+                    const handleBackgroundTVInfo = () => {
+                        const backgroundTV = tvInput ? tvInput.value.trim() : '';
+                        if (backgroundTV) {
+                            categoryButtons.forEach(b => b.classList.remove('selected'));
+                            window.selectedActivity = {
+                                name: activity.name,
+                                color: activity.color,
+                                category: category.name,
+                                backgroundTV: backgroundTV
+                            };
+                            activityButton.classList.add('selected');
+                            backgroundTVModal.style.display = 'none';
+                            const actModal = document.getElementById('activitiesModal');
+                            if (actModal) actModal.style.display = 'none';
+                        }
+                    };
+
+                    const confirmBtn = document.getElementById('confirmBackgroundTV');
+                    if (confirmBtn && tvInput) {
+                        const newConfirmBtn = confirmBtn.cloneNode(true);
+                        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+                        newConfirmBtn.addEventListener('click', handleBackgroundTVInfo);
+                        tvInput.onkeypress = (e) => { if (e.key === 'Enter') handleBackgroundTVInfo(); };
+                    }
+                    return;
+                }
+            }
+
+            // 3. Custom Activity Modal (Other / Specify)
+            if (actNameLower.includes('other not listed') || 
+                actNameLower.includes('other time use') || 
+                actNameLower.includes('other activities not listed') ||
+                actNameLower.includes('other screen media use')) {
+                
+                const customActivityModal = document.getElementById('customActivityModal');
+                const customActivityInput = document.getElementById('customActivityInput');
+
+                if (customActivityModal && customActivityInput) {
+                    customActivityInput.value = '';
+                    customActivityModal.style.display = 'block';
+                    customActivityInput.focus();
+
+                    const handleCustomActivity = () => {
+                        const customText = customActivityInput.value.trim();
+                        if (customText) {
+                            if (isMultipleChoice) {
+                                activityButton.classList.add('selected');
+                                const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
+                                window.selectedActivity = {
+                                    selections: selectedButtons.map(btn => ({
+                                        name: btn === activityButton ? customText : btn.querySelector('.activity-text')?.textContent || btn.textContent,
+                                        color: btn.style.getPropertyValue('--color')
+                                    })),
+                                    category: category.name
+                                };
+                            } else {
+                                categoryButtons.forEach(b => b.classList.remove('selected'));
+                                window.selectedActivity = {
+                                    name: customText,
+                                    color: activity.color,
+                                    category: category.name
+                                };
+                                activityButton.classList.add('selected');
+                            }
+                            customActivityModal.style.display = 'none';
+                            const actModal = document.getElementById('activitiesModal');
+                            if (actModal) actModal.style.display = 'none';
+                        }
+                    };
+
+                    const confirmBtn = document.getElementById('confirmCustomActivity');
+                    if (confirmBtn) {
+                        const newConfirmBtn = confirmBtn.cloneNode(true);
+                        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+                        newConfirmBtn.addEventListener('click', handleCustomActivity);
+                        customActivityInput.onkeypress = (e) => { if (e.key === 'Enter') handleCustomActivity(); };
+                    }
+                    return;
+                }
+            }
+
+            // 4. Child Items Modal
+            if (activity.childItems && activity.childItems.length > 0) {
+                categoryButtons.forEach(b => b.classList.remove('selected'));
+                activityButton.classList.add('selected');
+                renderChildItems(activity, category.name);
+                return;
+            }
+
+            // 5. Regular Activity Selection (Single & Multiple Choice)
+            if (isMultipleChoice) {
+                activityButton.classList.toggle('selected');
+                const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
+
+                if (selectedButtons.length > 0) {
+                    window.selectedActivity = {
+                        selections: selectedButtons.map(btn => ({
+                            name: btn.querySelector('.activity-text')?.textContent || btn.textContent,
+                            color: btn.style.getPropertyValue('--color')
+                        })),
+                        category: category.name
+                    };
+                } else {
+                    if (!activityButton.closest('#modalActivitiesContainer')) {
+                        window.selectedActivity = null;
+                    }
+                }
+            } else {
+                categoryButtons.forEach(b => b.classList.remove('selected'));
+                window.selectedActivity = {
+                    name: activity.name,
+                    color: activity.color,
+                    category: category.name
+                };
+                activityButton.classList.add('selected');
+
+                const preservedActivity = window.selectedActivity;
+                const closeModal = () => {
+                    const activitiesModal = document.getElementById('activitiesModal');
+                    const customActivityModal = document.getElementById('customActivityModal');
+                    if (activitiesModal) activitiesModal.style.cssText = 'display: none !important';
+                    if (customActivityModal) customActivityModal.style.cssText = 'display: none !important';
+                    if (preservedActivity && !window.selectedActivity) {
+                        window.selectedActivity = preservedActivity;
+                    }
+                };
+
+                if (getIsMobile()) {
+                    setTimeout(closeModal, 50);
+                } else {
+                    closeModal();
+                }
+            }
+        });
+    };
+
+    // Render DOM Elements
+    const isMobileAccordion = isMobile && isModal;
+    const parentContainer = isMobileAccordion ? document.createElement('div') : container;
+    if (isMobileAccordion) parentContainer.className = 'activities-accordion';
+
+    categories.forEach(category => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'activity-category';
+
+        const categoryTitle = document.createElement('h3');
+        categoryTitle.textContent = category.name;
+        categoryDiv.appendChild(categoryTitle);
+
+        const activityButtonsDiv = document.createElement('div');
+        activityButtonsDiv.className = 'activity-buttons';
+
+        category.activities.forEach(activity => {
+            const activityButton = document.createElement('button');
+            const isMultipleChoice = container.getAttribute('data-mode') === 'multiple-choice';
+            activityButton.className = `activity-button ${isMultipleChoice ? 'checkbox-style' : ''}`;
+            
+            if (activity.childItems && activity.childItems.length > 0) {
+                activityButton.classList.add('has-child-items');
+            }
+
+            activityButton.style.setProperty('--color', activity.color);
+
+            if (isMultipleChoice) {
+                const checkmark = document.createElement('span');
+                checkmark.className = 'checkmark';
+                activityButton.appendChild(checkmark);
+            }
+
+            const textSpan = document.createElement('span');
+            textSpan.className = 'activity-text';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'activity-name';
+            nameSpan.textContent = activity.name;
+            textSpan.appendChild(nameSpan);
+
+            if (activity.examples) {
+                const examplesSpan = document.createElement('span');
+                examplesSpan.className = 'activity-examples';
+                examplesSpan.textContent = activity.examples;
+                textSpan.appendChild(examplesSpan);
+            }
+
+            activityButton.appendChild(textSpan);
+            attachActivityClickListener(activityButton, activity, category);
+            activityButtonsDiv.appendChild(activityButton);
         });
 
-        container.appendChild(accordionContainer);
+        categoryDiv.appendChild(activityButtonsDiv);
+        parentContainer.appendChild(categoryDiv);
+    });
 
-        // Add click event listener to category titles
-        const categoryTitles = accordionContainer.querySelectorAll('.activity-category h3');
+    if (isMobileAccordion) {
+        container.appendChild(parentContainer);
+        const categoryTitles = parentContainer.querySelectorAll('.activity-category h3');
         categoryTitles.forEach(title => {
             title.addEventListener('click', () => {
-                const category = title.parentElement;
-                category.classList.toggle('active');
+                title.parentElement.classList.toggle('active');
             });
-        });
-    } else {
-        categories.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'activity-category';
-
-            const categoryTitle = document.createElement('h3');
-            categoryTitle.textContent = category.name;
-            categoryDiv.appendChild(categoryTitle);
-
-            const activityButtonsDiv = document.createElement('div');
-            activityButtonsDiv.className = 'activity-buttons';
-
-            category.activities.forEach(activity => {
-                const activityButton = document.createElement('button');
-                const isMultipleChoice = container.getAttribute('data-mode') === 'multiple-choice';
-                activityButton.className = `activity-button ${isMultipleChoice ? 'checkbox-style' : ''}`;
-                // Add indicator class if activity has child items
-                if (activity.childItems && activity.childItems.length > 0) {
-                    activityButton.classList.add('has-child-items');
-                }
-                
-                activityButton.style.setProperty('--color', activity.color);
-                
-                if (isMultipleChoice) {
-                    const checkmark = document.createElement('span');
-                    checkmark.className = 'checkmark';
-                    activityButton.appendChild(checkmark);
-                }
-                
-                const textSpan = document.createElement('span');
-                textSpan.className = 'activity-text';
-                
-                // Create name span
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'activity-name';
-                nameSpan.textContent = activity.name;
-                textSpan.appendChild(nameSpan);
-                
-                // Add examples if they exist
-                if (activity.examples) {
-                    const examplesSpan = document.createElement('span');
-                    examplesSpan.className = 'activity-examples';
-                    examplesSpan.textContent = activity.examples;
-                    textSpan.appendChild(examplesSpan);
-                }
-                
-                activityButton.appendChild(textSpan);
-                activityButton.addEventListener('click', () => {
-                    const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
-                    const isMultipleChoice = activitiesContainer ? activitiesContainer.getAttribute('data-mode') === 'multiple-choice' : false;
-                    const categoryButtons = activityButton.closest('.activity-category')
-                        ? activityButton.closest('.activity-category').querySelectorAll('.activity-button')
-                        : [];
-                    
-                    // Check if this is a media activity that requires media information (reading, video, games)
-                    if (activity.name.toLowerCase().includes('watched video') || 
-                        activity.name.toLowerCase().includes('played games')){
-                        const mediaInfoModal = document.getElementById('mediaInfoModal');
-                        if (mediaInfoModal) {
-                            // Clear previous selections
-                            document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
-                            document.querySelectorAll('input[name="mediaEducational"]').forEach(radio => radio.checked = false);
-                            document.getElementById('mediaNameInput').value = '';
-                            mediaInfoModal.style.display = 'block';
-                            document.getElementById('mediaNameInput').focus();
-                            
-                            // Handle media info submission
-                            const handleMediaInfo = () => {
-                                const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
-                                const selectedEducational = document.querySelector('input[name="mediaEducational"]:checked');
-                                const mediaName = document.getElementById('mediaNameInput').value.trim();
-                                
-                                if (selectedAge && selectedEducational && mediaName) {
-                                    categoryButtons.forEach(b => b.classList.remove('selected'));
-                                    window.selectedActivity = {
-                                        name: activity.name,
-                                        color: activity.color,
-                                        category: category.name,
-                                        mediaAge: selectedAge.value,
-                                        mediaEducational: selectedEducational.value,
-                                        mediaName: mediaName
-                                    };
-                                    activityButton.classList.add('selected');
-                                    mediaInfoModal.style.display = 'none';
-                                    document.getElementById('activitiesModal').style.display = 'none';
-                                } else {
-                                    if (!selectedAge) {
-                                        window.showToast('Please select the age appropriateness of the media', 'warning');
-                                    }
-                                    if (!mediaName) {
-                                        window.showToast('Please enter the media name or description', 'warning');
-                                    }
-                                    if (!selectedEducational) {
-                                        window.showToast('Please indicate whether the media was educational', 'warning');
-                                    }
-                                }
-                            }
-                        }
-                        };
-
-                        // Check if this is an unplugged activity that requires background TV information
-                        if (activity.name.toLowerCase().includes('nap') || 
-                        activity.name.toLowerCase().includes('eat')) {
-                        const BackgroundTVModal = document.getElementById('backgroundTVModal');
-                        if (backgroundTVModal) {
-                            // Clear previous selections
-                            document.getElementById('backgroundTVInput').value = '';
-                            backgroundTVModal.style.display = 'block';
-                            document.getElementById('backgroundTVInput').focus();
-                            
-                            // Handle background TV info submission
-                            const handleBackgroundTVInfo = () => {
-                                const backgroundTV = document.getElementById('backgroundTVInput').value.trim();
-                                
-                                if (backgroundTV) {
-                                    categoryButtons.forEach(b => b.classList.remove('selected'));
-                                    window.selectedActivity = {
-                                        name: activity.name,
-                                        color: activity.color,
-                                        category: category.name,
-                                        backgroundTV: backgroundTV
-                                    };
-                                    activityButton.classList.add('selected');
-                                    backgroundTVModal.style.display = 'none';
-                                    document.getElementById('activitiesModal').style.display = 'none';
-                                }
-                            };
-                            
-                            // Set up event listeners for background TV modal
-                            const confirmBtn = document.getElementById('confirmBackgroundTV');
-                            const backgroundTVInput = document.getElementById('backgroundTVInput');
-                            
-                            // Remove any existing listeners
-                            const newConfirmBtn = confirmBtn.cloneNode(true);
-                            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-                            
-                            // Add new listeners
-                            newConfirmBtn.addEventListener('click', handleBackgroundTVInfo);
-                            backgroundTVInput.addEventListener('keypress', (e) => {
-                                if (e.key === 'Enter') {
-                                    handleBackgroundTVInfo();
-                                }
-                            });
-                            
-                            return;
-                        }
-                    }
-                    
-                    // Check if this is the "other not listed" button
-                    if (activity.name.toLowerCase().includes('other not listed (enter)') || 
-                        activity.name.toLowerCase().includes('other time use (please specify)') ||
-                        activity.name.toLowerCase().includes('other activities not listed') ||
-                        activity.name.toLowerCase().includes('other screen media use (please specify)')) {
-                        // Show custom activity modal
-                        const customActivityModal = document.getElementById('customActivityModal');
-                        const customActivityInput = document.getElementById('customActivityInput');
-                        customActivityInput.value = ''; // Clear previous input
-                        customActivityModal.style.display = 'block';
-                        customActivityInput.focus(); // Focus the input field
-                        
-                        // Handle custom activity submission
-                        const handleCustomActivity = () => {
-                            const customText = customActivityInput.value.trim();
-                            if (customText) {
-                                if (isMultipleChoice) {
-                                    activityButton.classList.add('selected');
-                                    const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
-                                    window.selectedActivity = {
-                                        selections: selectedButtons.map(btn => ({
-                                            name: btn === activityButton ? customText : btn.querySelector('.activity-text').textContent,
-                                            color: btn.style.getPropertyValue('--color')
-                                        })),
-                                        category: category.name
-                                    };
-                                } else {
-                                    categoryButtons.forEach(b => b.classList.remove('selected'));
-                                    window.selectedActivity = {
-                                        name: customText,
-                                        color: activity.color,
-                                        category: category.name
-                                    };
-                                    activityButton.classList.add('selected');
-                                }
-                                customActivityModal.style.display = 'none';
-                                document.getElementById('activitiesModal').style.display = 'none';
-                            }
-                        };
-
-                        // Set up event listeners for custom activity modal
-                        const confirmBtn = document.getElementById('confirmCustomActivity');
-                        const inputField = document.getElementById('customActivityInput');
-                        
-                        // Remove any existing listeners
-                        const newConfirmBtn = confirmBtn.cloneNode(true);
-                        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-                        
-                        // Add new listeners
-                        newConfirmBtn.addEventListener('click', handleCustomActivity);
-                        inputField.addEventListener('keypress', (e) => {
-                            if (e.key === 'Enter') {
-                                handleCustomActivity();
-                            }
-                        });
-                        
-                        return;
-                    }
-                    
-                    // Check if activity has child items
-                    if (activity.childItems && activity.childItems.length > 0) {
-                        categoryButtons.forEach(b => b.classList.remove('selected'));
-                        activityButton.classList.add('selected');
-                        
-                        // Show child items modal
-                        renderChildItems(activity, category.name);
-                        return;
-                    }
-                    
-                    if (isMultipleChoice) {
-                        // Toggle selection for this button
-                        activityButton.classList.toggle('selected');
-            
-                        // Get all selected activities in this category
-                        const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
-            
-                        if (selectedButtons.length > 0) {
-                            window.selectedActivity = {
-                                selections: selectedButtons.map(btn => ({
-                                    name: btn.querySelector('.activity-text').textContent,
-                                    color: btn.style.getPropertyValue('--color')
-                                })),
-                                category: category.name
-                            };
-                        } else {
-                            // Only clear window.selectedActivity in multiple-choice mode if user actively deselected
-                            // Don't clear if we're in a modal that's about to close
-                            const isInModal = activityButton.closest('#modalActivitiesContainer');
-                            if (!isInModal) {
-                                console.log('[ACTIVITY] Clearing window.selectedActivity - not in modal');
-                                window.selectedActivity = null;
-                            } else {
-                                console.log('[ACTIVITY] NOT clearing window.selectedActivity - in modal');
-                            }
-                        }
-                    } else {
-                        // Single choice mode
-                        categoryButtons.forEach(b => b.classList.remove('selected'));
-                        window.selectedActivity = {
-                            name: activity.name,
-                            color: activity.color,
-                            category: category.name
-                        };
-                        console.log('[ACTIVITY] Selected activity:', window.selectedActivity);
-                        activityButton.classList.add('selected');
-                    }
-                    // Only close modal in single-choice mode
-                    if (!isMultipleChoice) {
-                        // Store the selected activity before closing modal to prevent it from being cleared
-                        const preservedActivity = window.selectedActivity;
-                        
-                        // Force close modals with a slight delay on mobile
-                        if (getIsMobile()) {
-                            setTimeout(() => {
-                                const activitiesModal = document.getElementById('activitiesModal');
-                                const customActivityModal = document.getElementById('customActivityModal');
-                                if (activitiesModal) {
-                                    activitiesModal.style.cssText = 'display: none !important';
-                                }
-                                if (customActivityModal) {
-                                    customActivityModal.style.cssText = 'display: none !important';
-                                }
-                                // Restore window.selectedActivity after modal closes in case it was cleared
-                                if (preservedActivity && !window.selectedActivity) {
-                                    window.selectedActivity = preservedActivity;
-                                    console.log('[MODAL] Restored window.selectedActivity:', window.selectedActivity);
-                                } else {
-                                    console.log('[MODAL] window.selectedActivity after close:', window.selectedActivity);
-                                }
-                            }, 50);
-                        } else {
-                            // Immediate close on desktop
-                            const activitiesModal = document.getElementById('activitiesModal');
-                            const customActivityModal = document.getElementById('customActivityModal');
-                            if (activitiesModal) {
-                                activitiesModal.style.cssText = 'display: none !important';
-                            }
-                            if (customActivityModal) {
-                                customActivityModal.style.cssText = 'display: none !important';
-                            }
-                            // Restore window.selectedActivity after modal closes in case it was cleared
-                            if (preservedActivity && !window.selectedActivity) {
-                                window.selectedActivity = preservedActivity;
-                            }
-                        }
-                    }
-                });
-                activityButtonsDiv.appendChild(activityButton);
-            });
-            categoryDiv.appendChild(activityButtonsDiv);
-            container.appendChild(categoryDiv);
         });
     }
 }

@@ -191,271 +191,156 @@ window.updateDisabledButtonOverlays = updateDisabledButtonOverlays;
 
 // Modal management
 function createModal() {
-    // Check if modals already exist
     const existingActivitiesModal = document.getElementById('activitiesModal');
-    if (existingActivitiesModal) {
+    if (existingActivitiesModal && document.getElementById('mediaInfoModal')) {
+        updateDisabledButtonOverlays();
         return existingActivitiesModal;
     }
-    
 
-    // Create custom activity input modal
-    const customActivityModal = document.createElement('div');
-    customActivityModal.className = 'modal-overlay';
-    customActivityModal.id = 'customActivityModal';
-    customActivityModal.innerHTML = `
-        <div class="modal">
-            <div class="modal-header">
-                <h3 data-i18n="modals.customActivity.title">Enter Custom Activity</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-content">
-                <input type="text" id="customActivityInput" maxlength="30" data-i18n-placeholder="modals.customActivity.placeholder" placeholder="Enter your activity (max 30 chars)">
-                <div class="button-container">
-                    <button id="confirmCustomActivity" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+    // --- Create Custom Activity Modal ---
+    if (!document.getElementById('customActivityModal')) {
+        const customActivityModal = document.createElement('div');
+        customActivityModal.className = 'modal-overlay';
+        customActivityModal.id = 'customActivityModal';
+        customActivityModal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 data-i18n="modals.customActivity.title">Enter Custom Activity</h3>
+                    <button class="modal-close">&times;</button>
                 </div>
-            </div>
-        </div>
-    `;
-
-    customActivityModal.querySelector('.modal-close').addEventListener('click', () => {
-        customActivityModal.style.cssText = 'display: none !important';
-    });
-
-    customActivityModal.addEventListener('click', (e) => {
-        if (e.target === customActivityModal) {
+                <div class="modal-content">
+                    <input type="text" id="customActivityInput" maxlength="30" data-i18n-placeholder="modals.customActivity.placeholder" placeholder="Enter your activity (max 30 chars)">
+                    <div class="button-container">
+                        <button id="confirmCustomActivity" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+                    </div>
+                </div>
+            </div>`;
+        
+        customActivityModal.querySelector('.modal-close').addEventListener('click', () => {
             customActivityModal.style.cssText = 'display: none !important';
-        }
-    });
-
-    // Create activities modal
-    const activitiesModal = document.createElement('div');
-    activitiesModal.className = 'modal-overlay';
-    activitiesModal.id = 'activitiesModal';
-    activitiesModal.innerHTML = `
-        <div class="modal">
-            <div class="modal-header">
-                <h3 data-i18n="modals.addActivity.title">Add Activity</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div id="modalActivitiesContainer"></div>
-        </div>
-    `;
-
-    activitiesModal.querySelector('.modal-close').addEventListener('click', () => {
-        activitiesModal.style.cssText = 'display: none !important';
-    });
-
-    activitiesModal.addEventListener('click', (e) => {
-        if (e.target === activitiesModal) {
-            activitiesModal.style.cssText = 'display: none !important';
-        }
-    });
-
-    // NEW: Add event delegation for handling "Other not listed (enter)" clicks
-    const modalActivitiesContainer = activitiesModal.querySelector('#modalActivitiesContainer');
-    modalActivitiesContainer.addEventListener('click', (e) => {
-        if (
-            e.target.classList.contains('activity-name') && 
-            (e.target.textContent.trim() === 'Other not listed (enter)' || 
-             e.target.textContent.trim().includes('Other activities not listed') ||
-             e.target.textContent.trim().includes('other time use (please specify)'))
-        ) {
-            // Hide the activities modal
-            activitiesModal.style.cssText = 'display: none !important';
-            // Show the custom activity input modal
-            const customActivityModal = document.getElementById('customActivityModal');
-            if (customActivityModal) {
-                customActivityModal.style.display = 'block';
-                // Focus the input field for better user experience
-                const customActivityInput = document.getElementById('customActivityInput');
-                if (customActivityInput) {
-                    customActivityInput.focus();
-                }
+        });
+        customActivityModal.addEventListener('click', (e) => {
+            if (e.target === customActivityModal) {
+                customActivityModal.style.cssText = 'display: none !important';
             }
-            e.stopPropagation();
-        }
-    });
+        });
+        document.body.appendChild(customActivityModal);
+    }
 
-    // Create confirmation modal
-    const confirmationModal = document.createElement('div');
-    confirmationModal.className = 'modal-overlay';
-    confirmationModal.id = 'confirmationModal';
-    confirmationModal.innerHTML = `
-        <div class="modal">
-            <div class="modal-content">
-                <h3 data-i18n="modals.confirmSubmit.title">Are you sure?</h3>
-                <p data-i18n="modals.confirmSubmit.message">You will not be able to change your responses.</p>
-                <div class="button-container">
-                    <button id="confirmCancel" class="btn btn-secondary" data-i18n="buttons.cancel">Cancel</button>
-                    <button id="confirmOk" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+    // --- Create Activities Modal ---
+    let activitiesModal = document.getElementById('activitiesModal');
+    if (!activitiesModal) {
+        activitiesModal = document.createElement('div');
+        activitiesModal.className = 'modal-overlay';
+        activitiesModal.id = 'activitiesModal';
+        activitiesModal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 data-i18n="modals.addActivity.title">Add Activity</h3>
+                    <button class="modal-close">&times;</button>
                 </div>
-            </div>
-        </div>
-    `;
-
-    confirmationModal.querySelector('#confirmCancel').addEventListener('click', () => {
-        confirmationModal.style.cssText = 'display: none !important';
-    });
-
-    confirmationModal.querySelector('#confirmOk').addEventListener('click', async () => {
-        confirmationModal.style.cssText = 'display: none !important';
-        showLoadingModal();
-        document.getElementById('nextBtn').disabled = true;
-
-        // Announce submission started for screen readers
-        announceSubmissionStatus('submitting');
-
-        try {
-            const result = await sendData();
-            if (result && result.success) {
-                // Clear autosave draft after successful submission
-                await onSubmitSuccess();
-                // Announce success for screen readers
-                announceSubmissionStatus('success');
+                <div id="modalActivitiesContainer"></div>
+            </div>`;
+        
+        activitiesModal.querySelector('.modal-close').addEventListener('click', () => {
+            activitiesModal.style.cssText = 'display: none !important';
+        });
+        activitiesModal.addEventListener('click', (e) => {
+            if (e.target === activitiesModal) {
+                activitiesModal.style.cssText = 'display: none !important';
             }
-        } catch (error) {
-            console.error('[submit] Error during submission:', error);
-            // Announce error for screen readers
-            announceSubmissionStatus('error');
-            // Don't clear autosave on error - user can retry
-        }
-    });
+        });
+        document.body.appendChild(activitiesModal);
+    }
 
-    // Create loading modal
-    const loadingModal = document.createElement('div');
-    loadingModal.className = 'modal-overlay';
-    loadingModal.id = 'loadingModal';
-    loadingModal.innerHTML = `
-        <div class="modal loading-modal">
-            <div class="modal-content">
-                <div class="loading-spinner"></div>
-                <h3 data-i18n="modals.loading.title">Submitting your diary...</h3>
-                <p data-i18n="modals.loading.message">Please wait while we save your responses.</p>
-            </div>
-        </div>
-    `;
-
-    // Create background TV modal
-    const backgroundTVModal = document.createElement('div');
-    backgroundTVModal.className = 'modal-overlay';
-    backgroundTVModal.id = 'backgroundTVModal';
-    backgroundTVModal.innerHTML = `
-        <div class="modal">
-            <div class="modal-header">
-                <h3 data-i18n="modals.backgroundTV.title">Background TV Information</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-content">
-            <div class="form-group">
-                    <label for="backgroundTVInput" data-i18n="modals.backgroundTV.nameLabel">For how many minutes was there television left on without anyone actively watching it during this activity?</label>
-                    <input type="text" id="backgroundTVInput" maxlength="100" data-i18n-placeholder="modals.backgroundTV.placeholder" placeholder="Enter minutes">
+    // --- Create Background TV Modal ---
+    if (!document.getElementById('backgroundTVModal')) {
+        const backgroundTVModal = document.createElement('div');
+        backgroundTVModal.className = 'modal-overlay';
+        backgroundTVModal.id = 'backgroundTVModal';
+        backgroundTVModal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 data-i18n="modals.backgroundTV.title">Background TV Information</h3>
+                    <button class="modal-close">&times;</button>
                 </div>
-            </div>
-                <div class="button-container">
-                    <button id="confirmBackgroundTV" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+                <div class="modal-content">
+                    <div class="form-group">
+                        <label for="backgroundTVInput" data-i18n="modals.backgroundTV.nameLabel">For how many minutes was there television left on without anyone actively watching it during this activity?</label>
+                        <input type="text" id="backgroundTVInput" maxlength="100" data-i18n-placeholder="modals.backgroundTV.placeholder" placeholder="Enter minutes">
+                    </div>
+                    <div class="button-container">
+                        <button id="confirmBackgroundTV" class="btn save-btn" data-i18n="buttons.ok">OK</button>
+                    </div>
                 </div>
-        </div>
-    `;
+            </div>`;
 
-    
-    backgroundTVModal.querySelector('.modal-close').addEventListener('click', () => {
-        backgroundTVModal.style.cssText = 'display: none !important';
-    });
-
-    backgroundTVModal.addEventListener('click', (e) => {
-        if (e.target === backgroundTVModal) {
+        backgroundTVModal.querySelector('.modal-close').addEventListener('click', () => {
             backgroundTVModal.style.cssText = 'display: none !important';
-        }
-    });
+        });
+        backgroundTVModal.addEventListener('click', (e) => {
+            if (e.target === backgroundTVModal) {
+                backgroundTVModal.style.cssText = 'display: none !important';
+            }
+        });
+        document.body.appendChild(backgroundTVModal);
+    }
 
-    document.body.appendChild(backgroundTVModal);
-    
-    return activitiesModal;
-    // Create media information modal
-    const mediaInfoModal = document.createElement('div');
-    mediaInfoModal.className = 'modal-overlay';
-    mediaInfoModal.id = 'mediaInfoModal';
-    mediaInfoModal.innerHTML = `
-        <div class="modal">
-            <div class="modal-header">
-                <h3 data-i18n="modals.mediaInfo.title">Media Information</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-content">
-                <div class="form-group">
-                    <label data-i18n="modals.mediaInfo.ageLabel">Was the media viewed by your child appropriate for:</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="mediaAge" value="child">
-                            <span data-i18n="modals.mediaInfo.ageOptions.childAge">Child's age</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="mediaAge" value="older">
-                            <span data-i18n="modals.mediaInfo.ageOptions.older">Older children</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="mediaAge" value="younger">
-                            <span data-i18n="modals.mediaInfo.ageOptions.younger">Younger children</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="mediaAge" value="adults">
-                            <span data-i18n="modals.mediaInfo.ageOptions.adults">Adults</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="mediaAge" value="unknown">
-                            <span data-i18n="modals.mediaInfo.ageOptions.unknown">Don't know</span>
-                        </label>
+    // --- Create Media Info Modal ---
+    if (!document.getElementById('mediaInfoModal')) {
+        const mediaInfoModal = document.createElement('div');
+        mediaInfoModal.className = 'modal-overlay';
+        mediaInfoModal.id = 'mediaInfoModal';
+        mediaInfoModal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 data-i18n="modals.mediaInfo.title">Media Information</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <div class="form-group">
+                        <label data-i18n="modals.mediaInfo.ageLabel">Was the media viewed appropriate for:</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="mediaAge" value="child"><span data-i18n="modals.mediaInfo.ageOptions.childAge">Child's age</span></label>
+                            <label class="radio-option"><input type="radio" name="mediaAge" value="older"><span data-i18n="modals.mediaInfo.ageOptions.older">Older children</span></label>
+                            <label class="radio-option"><input type="radio" name="mediaAge" value="younger"><span data-i18n="modals.mediaInfo.ageOptions.younger">Younger children</span></label>
+                            <label class="radio-option"><input type="radio" name="mediaAge" value="adults"><span data-i18n="modals.mediaInfo.ageOptions.adults">Adults</span></label>
+                            <label class="radio-option"><input type="radio" name="mediaAge" value="unknown"><span data-i18n="modals.mediaInfo.ageOptions.unknown">Don't know</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mediaNameInput" data-i18n="modals.mediaInfo.nameLabel">What was the name of the media program?</label>
+                        <input type="text" id="mediaNameInput" maxlength="100" data-i18n-placeholder="modals.mediaInfo.placeholder" placeholder="Enter media name or description">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="modals.mediaInfo.educationalLabel">Was the media educational?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="mediaEducational" value="yes"><span data-i18n="modals.mediaInfo.educationalOptions.yes">Yes</span></label>
+                            <label class="radio-option"><input type="radio" name="mediaEducational" value="no"><span data-i18n="modals.mediaInfo.educationalOptions.no">No</span></label>
+                            <label class="radio-option"><input type="radio" name="mediaEducational" value="unknown"><span data-i18n="modals.mediaInfo.educationalOptions.unknown">Don't know</span></label>
+                        </div>
+                    </div>
+                    <div class="button-container">
+                        <button id="confirmMediaInfo" class="btn save-btn" data-i18n="buttons.ok">OK</button>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="mediaNameInput" data-i18n="modals.mediaInfo.nameLabel">What was the name of the media program (e.g., name of the show or app)? If you don't know the exact name, you can give a general description (e.g., a drawing app, a movie about unicorns).</label>
-                    <input type="text" id="mediaNameInput" maxlength="100" data-i18n-placeholder="modals.mediaInfo.placeholder" placeholder="Enter media name or description">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="modals.mediaInfo.educationalLabel">Was the media educational?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="mediaEducational" value="yes">
-                            <span data-i18n="modals.mediaInfo.educationalOptions.yes">Yes</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="mediaEducational" value="no">
-                            <span data-i18n="modals.mediaInfo.educationalOptions.no">No</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="mediaEducational" value="unknown">
-                            <span data-i18n="modals.mediaInfo.educationalOptions.unknown">Don't know</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="button-container">
-                    <button id="confirmMediaInfo" class="btn save-btn" data-i18n="buttons.ok">OK</button>
-                </div>
-            </div>
-        </div>
-    `;
+            </div>`;
 
-    mediaInfoModal.querySelector('.modal-close').addEventListener('click', () => {
-        mediaInfoModal.style.cssText = 'display: none !important';
-    });
-
-    mediaInfoModal.addEventListener('click', (e) => {
-        if (e.target === mediaInfoModal) {
+        mediaInfoModal.querySelector('.modal-close').addEventListener('click', () => {
             mediaInfoModal.style.cssText = 'display: none !important';
-        }
-    });
+        });
+        mediaInfoModal.addEventListener('click', (e) => {
+            if (e.target === mediaInfoModal) {
+                mediaInfoModal.style.cssText = 'display: none !important';
+            }
+        });
+        document.body.appendChild(mediaInfoModal);
+    }
 
-    document.body.appendChild(activitiesModal);
-    document.body.appendChild(confirmationModal);
-    document.body.appendChild(loadingModal);
-    document.body.appendChild(customActivityModal);
-    document.body.appendChild(mediaInfoModal);
-    
-    // Apply translations to the newly created modal elements
     if (window.i18n && window.i18n.isReady()) {
         window.i18n.applyTranslations();
     }
-    
+
     return activitiesModal;
 }
 
@@ -1078,3 +963,10 @@ export {
     showLoadingModal,
     hideLoadingModal
 };
+
+// Initialize Modal DOM elements immediately on script load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => createModal());
+} else {
+    createModal();
+}
