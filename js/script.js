@@ -963,6 +963,8 @@ function renderActivities(categories, container = document.getElementById('activ
                 if (mediaInfoModal) {
                     document.querySelectorAll('input[name="mediaAge"]').forEach(radio => radio.checked = false);
                     document.querySelectorAll('input[name="mediaEducational"]').forEach(radio => radio.checked = false);
+                    document.querySelectorAll('input[name="mediaCoview"]').forEach(radio => radio.checked = false);
+                    
                     const mediaInput = document.getElementById('mediaNameInput');
                     if (mediaInput) mediaInput.value = '';
 
@@ -973,6 +975,7 @@ function renderActivities(categories, container = document.getElementById('activ
                         const selectedAge = document.querySelector('input[name="mediaAge"]:checked');
                         const selectedEducational = document.querySelector('input[name="mediaEducational"]:checked');
                         const mediaName = mediaInput ? mediaInput.value.trim() : '';
+                        const selectedCoview = document.querySelector('input[name="mediaCoview"]:checked');
 
                         if (selectedAge && selectedEducational && mediaName) {
                             categoryButtons.forEach(b => b.classList.remove('selected'));
@@ -982,7 +985,8 @@ function renderActivities(categories, container = document.getElementById('activ
                                 category: category.name,
                                 mediaAge: selectedAge.value,
                                 mediaEducational: selectedEducational.value,
-                                mediaName: mediaName
+                                mediaName: mediaName,
+                                mediaCoview: selectedCoview.value
                             };
                             activityButton.classList.add('selected');
                             mediaInfoModal.style.display = 'none';
