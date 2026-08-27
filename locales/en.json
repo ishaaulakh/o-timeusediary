@@ -75,6 +75,12 @@
         "yes": "Yes",
         "no": "No",
         "unknown": "Don't know"
+      },
+      "coviewLabel": "Was someone coviewing the screen with your child?",
+      "coviewOptions": {
+        "yes": "Yes",
+        "no": "No",
+        "unknown": "Don't know"
       }
     },
     "typicalDay": {

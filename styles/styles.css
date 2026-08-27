@@ -2349,6 +2349,31 @@ body {
     background: #cbd5e1;
 }
 
+/* Normal State */
+#confirmMediaInfo {
+    background: #059669; 
+    color: #fff;
+}
+
+/* Hover State (Mouse over) */
+#confirmMediaInfo:hover {
+    background: #047857; /* Put a slightly darker shade here */
+    transform: translateY(-1px);
+}
+
+/* Active State (Button clicked) */
+#confirmMediaInfo:active {
+    background: #047857; /* Put an even darker shade here */
+    transform: translateY(0);
+}
+
+/* Focus State (Keyboard navigation) */
+#confirmMediaInfo:focus {
+    outline: 3px solid #059669; 
+    outline-offset: 2px;
+}
+
+
 /* Desktop: side-by-side buttons */
 @media (min-width: 480px) {
     .recovery-modal-actions {

@@ -363,38 +363,103 @@ function createModal() {
         mediaInfoModal.id = 'mediaInfoModal';
         mediaInfoModal.innerHTML = `
             <div class="modal">
-                <div class="modal-header">
-                    <h3 data-i18n="modals.mediaInfo.title">Media Information</h3>
-                    <button class="modal-close">&times;</button>
+        <div class="modal-header">
+            <h3 data-i18n="modals.mediaInfo.title">Media Information</h3>
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        
+        <div class="modal-content">
+            <!-- Question 1: Age Appropriateness -->
+            <section class="form-section">
+                <label class="form-label" data-i18n="modals.mediaInfo.ageLabel">
+                    Was the media viewed appropriate for:
+                </label>
+                <div class="radio-grid grid-5">
+                    <label class="radio-card">
+                        <input type="radio" name="mediaAge" value="child">
+                        <span class="card-label" data-i18n="modals.mediaInfo.ageOptions.childAge">Child's age</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mediaAge" value="older">
+                        <span class="card-label" data-i18n="modals.mediaInfo.ageOptions.older">Older children</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mediaAge" value="younger">
+                        <span class="card-label" data-i18n="modals.mediaInfo.ageOptions.younger">Younger children</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mediaAge" value="adults">
+                        <span class="card-label" data-i18n="modals.mediaInfo.ageOptions.adults">Adults</span>
+                    </label>
+                    <label class="radio-card neutral-card">
+                        <input type="radio" name="mediaAge" value="unknown">
+                        <span class="card-label" data-i18n="modals.mediaInfo.ageOptions.unknown">Don't know</span>
+                    </label>
                 </div>
-                <div class="modal-content">
-                    <div class="form-group">
-                        <label data-i18n="modals.mediaInfo.ageLabel">Was the media viewed appropriate for:</label>
-                        <div class="radio-group">
-                            <label class="radio-option"><input type="radio" name="mediaAge" value="child"><span data-i18n="modals.mediaInfo.ageOptions.childAge">Child's age</span></label>
-                            <label class="radio-option"><input type="radio" name="mediaAge" value="older"><span data-i18n="modals.mediaInfo.ageOptions.older">Older children</span></label>
-                            <label class="radio-option"><input type="radio" name="mediaAge" value="younger"><span data-i18n="modals.mediaInfo.ageOptions.younger">Younger children</span></label>
-                            <label class="radio-option"><input type="radio" name="mediaAge" value="adults"><span data-i18n="modals.mediaInfo.ageOptions.adults">Adults</span></label>
-                            <label class="radio-option"><input type="radio" name="mediaAge" value="unknown"><span data-i18n="modals.mediaInfo.ageOptions.unknown">Don't know</span></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="mediaNameInput" data-i18n="modals.mediaInfo.nameLabel">What was the name of the media program?</label>
-                        <input type="text" id="mediaNameInput" maxlength="100" data-i18n-placeholder="modals.mediaInfo.placeholder" placeholder="Enter media name or description">
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="modals.mediaInfo.educationalLabel">Was the media educational?</label>
-                        <div class="radio-group">
-                            <label class="radio-option"><input type="radio" name="mediaEducational" value="yes"><span data-i18n="modals.mediaInfo.educationalOptions.yes">Yes</span></label>
-                            <label class="radio-option"><input type="radio" name="mediaEducational" value="no"><span data-i18n="modals.mediaInfo.educationalOptions.no">No</span></label>
-                            <label class="radio-option"><input type="radio" name="mediaEducational" value="unknown"><span data-i18n="modals.mediaInfo.educationalOptions.unknown">Don't know</span></label>
-                        </div>
-                    </div>
-                    <div class="button-container">
-                        <button id="confirmMediaInfo" class="btn save-btn" data-i18n="buttons.ok">OK</button>
-                    </div>
+            </section>
+
+            <!-- Question 2: Program Name -->
+            <section class="form-section">
+                <label class="form-label" for="mediaNameInput" data-i18n="modals.mediaInfo.nameLabel">
+                    What was the name of the media program?
+                </label>
+                <input 
+                    type="text" 
+                    id="mediaNameInput" 
+                    class="form-input" 
+                    maxlength="100" 
+                    data-i18n-placeholder="modals.mediaInfo.placeholder" 
+                    placeholder="Enter media name or description"
+                >
+            </section>
+
+            <!-- Question 3: Educational -->
+            <section class="form-section">
+                <label class="form-label" data-i18n="modals.mediaInfo.educationalLabel">
+                    Was the media educational?
+                </label>
+                <div class="radio-grid grid-3">
+                    <label class="radio-card">
+                        <input type="radio" name="mediaEducational" value="yes">
+                        <span class="card-label" data-i18n="modals.mediaInfo.educationalOptions.yes">Yes</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mediaEducational" value="no">
+                        <span class="card-label" data-i18n="modals.mediaInfo.educationalOptions.no">No</span>
+                    </label>
+                    <label class="radio-card neutral-card">
+                        <input type="radio" name="mediaEducational" value="unknown">
+                        <span class="card-label" data-i18n="modals.mediaInfo.educationalOptions.unknown">Don't know</span>
+                    </label>
                 </div>
-            </div>`;
+            </section>
+
+            <!-- Question 4: Co-viewing -->
+            <section class="form-section">
+                <label class="form-label" data-i18n="modals.mediaInfo.coviewLabel">
+                    Was someone coviewing the screen with your child?
+                </label>
+                <div class="radio-grid grid-3">
+                    <label class="radio-card">
+                        <input type="radio" name="mediaCoview" value="yes">
+                        <span class="card-label" data-i18n="modals.mediaInfo.coviewOptions.yes">Yes</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="mediaCoview" value="no">
+                        <span class="card-label" data-i18n="modals.mediaInfo.coviewOptions.no">No</span>
+                    </label>
+                    <label class="radio-card neutral-card">
+                        <input type="radio" name="mediaCoview" value="unknown">
+                        <span class="card-label" data-i18n="modals.mediaInfo.coviewOptions.unknown">Don't know</span>
+                    </label>
+                </div>
+            </section>
+
+            <div class="modal-footer">
+                <button id="confirmMediaInfo" class="btn btn-primary" data-i18n="buttons.ok">Save Information</button>
+            </div>
+        </div>
+     </div>`;
 
         mediaInfoModal.querySelector('.modal-close').addEventListener('click', () => {
             mediaInfoModal.style.cssText = 'display: none !important';

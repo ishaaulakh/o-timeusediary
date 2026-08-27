@@ -65,10 +65,10 @@
             ]
           },
           {
-            "name": "Recreation",
+            "name": "Unplugged Activites",
             "activities": [
               {
-                "name": "Reading or listening to a story (paper, audiobook, e-book)",
+                "name": "Reading or listening to a story",
                 "code": 127,
                 "label": "Reading or listening to a story",
                 "short": "reading",
@@ -76,19 +76,43 @@
                 "color": "#dfd4fd"
               },
               {
-                "name": "Playing (indoors/outdoors)",
+                "name": "Arts and crafts",
                 "code": 128,
-                "label": "playing",
+                "label": "Arts and crafts",
+                "short": "art",
+                "vshort": "art",
+                "color": "#dfd4fd"
+              },
+              {
+                "name": "Household chores",
+                "code": 133,
+                "label": "spending time with friends, family",
+                "short": "socialise",
+                "vshort": "soc",
+                "color": "#dfd4fd"
+              },
+              {
+                "name": "Play indoors",
+                "code": 133,
+                "label": "Play indoors",
                 "short": "play",
                 "vshort": "pla",
                 "color": "#dfd4fd"
               },
               {
-                "name": "Other recreation",
+                "name": "Playing outdoors",
                 "code": 133,
-                "label": "spending time with friends, family",
-                "short": "socialise",
-                "vshort": "soc",
+                "label": "Play outdoors",
+                "short": "play",
+                "vshort": "pla",
+                "color": "#dfd4fd"
+              },
+              {
+                "name": "Other unplugged activity",
+                "code": 133,
+                "label": "Other unplugged activity",
+                "short": "other unplugged",
+                "vshort": "oup",
                 "color": "#dfd4fd"
               }
             ]
@@ -126,9 +150,9 @@
                     "color": "#b3d6c0"
                   },
                   {
-                    "name": "Communicated with others in another way (talked on phone, helped to write a text message, etc.)",
+                    "name": "Communicated with people in another way (talked on phone, helped to write a text message, etc.)",
                     "code": 132,
-                    "label": "Communicated with others in another way (talked on phone, helped to write a text message, etc.)",
+                    "label": "Communicated with people in another way (talked on phone, helped to write a text message, etc.)",
                     "short": "Communicate",
                     "vshort": "com",
                     "color": "#b3d6c0"
@@ -150,9 +174,9 @@
                     "color": "#b3d6c0"
                   },
                   {
-                    "name": "Other screen media use (please specify)",
+                    "name": "Other screen media use",
                     "code": 132,
-                    "label": "Other screen media use (please specify)",
+                    "label": "Other screen media use",
                     "short": "Other screen media",
                     "vshort": "oth",
                     "color": "#b3d6c0"
@@ -168,7 +192,7 @@
                 "color": "#808080"
               },
               {
-                "name": "Other time use (please specify)",
+                "name": "Other time use",
                 "color": "#808080",
                 "childItems": []
               }

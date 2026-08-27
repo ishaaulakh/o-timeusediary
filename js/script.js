@@ -990,7 +990,7 @@ function renderActivities(categories, container = document.getElementById('activ
                             if (actModal) actModal.style.display = 'none';
                         } else {
                             if (!selectedAge && window.showToast) window.showToast('Please select age appropriateness', 'warning');
-                            if (!mediaName && window.showToast) window.showToast('Please enter media name', 'warning');
+                            // if (!mediaName && window.showToast) window.showToast('Please enter media name', 'warning');
                             if (!selectedEducational && window.showToast) window.showToast('Please indicate if educational', 'warning');
                         }
                     };
@@ -1006,8 +1006,10 @@ function renderActivities(categories, container = document.getElementById('activ
                 }
             }
 
-            // 2. Background TV Modal (nap / eat)
-            if (actNameLower.includes('nap') || actNameLower.includes('eat')) {
+            // 2. Background TV Modal 
+            if (actNameLower.includes('personal') || actNameLower.includes('drink') || actNameLower.includes('read') || actNameLower.includes('craft')
+                || actNameLower.includes('indoor') || actNameLower.includes('chores') 
+                || actNameLower.includes('other time use') || actNameLower.includes('unplugged')) {
                 const backgroundTVModal = document.getElementById('backgroundTVModal');
                 if (backgroundTVModal) {
                     const tvInput = document.getElementById('backgroundTVInput');
@@ -1044,57 +1046,55 @@ function renderActivities(categories, container = document.getElementById('activ
             }
 
             // 3. Custom Activity Modal (Other / Specify)
-            if (actNameLower.includes('other not listed') || 
-                actNameLower.includes('other time use') || 
-                actNameLower.includes('other activities not listed') ||
-                actNameLower.includes('other screen media use')) {
+            // if (actNameLower.includes('other time use') || 
+            //     actNameLower.includes('other screen media use')) {
                 
-                const customActivityModal = document.getElementById('customActivityModal');
-                const customActivityInput = document.getElementById('customActivityInput');
+            //     const customActivityModal = document.getElementById('customActivityModal');
+            //     const customActivityInput = document.getElementById('customActivityInput');
 
-                if (customActivityModal && customActivityInput) {
-                    customActivityInput.value = '';
-                    customActivityModal.style.display = 'block';
-                    customActivityInput.focus();
+            //     if (customActivityModal && customActivityInput) {
+            //         customActivityInput.value = '';
+            //         customActivityModal.style.display = 'block';
+            //         customActivityInput.focus();
 
-                    const handleCustomActivity = () => {
-                        const customText = customActivityInput.value.trim();
-                        if (customText) {
-                            if (isMultipleChoice) {
-                                activityButton.classList.add('selected');
-                                const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
-                                window.selectedActivity = {
-                                    selections: selectedButtons.map(btn => ({
-                                        name: btn === activityButton ? customText : btn.querySelector('.activity-text')?.textContent || btn.textContent,
-                                        color: btn.style.getPropertyValue('--color')
-                                    })),
-                                    category: category.name
-                                };
-                            } else {
-                                categoryButtons.forEach(b => b.classList.remove('selected'));
-                                window.selectedActivity = {
-                                    name: customText,
-                                    color: activity.color,
-                                    category: category.name
-                                };
-                                activityButton.classList.add('selected');
-                            }
-                            customActivityModal.style.display = 'none';
-                            const actModal = document.getElementById('activitiesModal');
-                            if (actModal) actModal.style.display = 'none';
-                        }
-                    };
+            //         const handleCustomActivity = () => {
+            //             const customText = customActivityInput.value.trim();
+            //             if (customText) {
+            //                 if (isMultipleChoice) {
+            //                     activityButton.classList.add('selected');
+            //                     const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
+            //                     window.selectedActivity = {
+            //                         selections: selectedButtons.map(btn => ({
+            //                             name: btn === activityButton ? customText : btn.querySelector('.activity-text')?.textContent || btn.textContent,
+            //                             color: btn.style.getPropertyValue('--color')
+            //                         })),
+            //                         category: category.name
+            //                     };
+            //                 } else {
+            //                     categoryButtons.forEach(b => b.classList.remove('selected'));
+            //                     window.selectedActivity = {
+            //                         name: customText,
+            //                         color: activity.color,
+            //                         category: category.name
+            //                     };
+            //                     activityButton.classList.add('selected');
+            //                 }
+            //                 customActivityModal.style.display = 'none';
+            //                 const actModal = document.getElementById('activitiesModal');
+            //                 if (actModal) actModal.style.display = 'none';
+            //             }
+            //         };
 
-                    const confirmBtn = document.getElementById('confirmCustomActivity');
-                    if (confirmBtn) {
-                        const newConfirmBtn = confirmBtn.cloneNode(true);
-                        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-                        newConfirmBtn.addEventListener('click', handleCustomActivity);
-                        customActivityInput.onkeypress = (e) => { if (e.key === 'Enter') handleCustomActivity(); };
-                    }
-                    return;
-                }
-            }
+            //         const confirmBtn = document.getElementById('confirmCustomActivity');
+            //         if (confirmBtn) {
+            //             const newConfirmBtn = confirmBtn.cloneNode(true);
+            //             confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            //             newConfirmBtn.addEventListener('click', handleCustomActivity);
+            //             customActivityInput.onkeypress = (e) => { if (e.key === 'Enter') handleCustomActivity(); };
+            //         }
+            //         return;
+            //     }
+            // }
 
             // 4. Child Items Modal
             if (activity.childItems && activity.childItems.length > 0) {
@@ -2134,6 +2134,7 @@ function initTimelineInteraction(timeline) {
             mediaAge: selectedActivitySnapshot?.mediaAge || '',
             mediaEducational: selectedActivitySnapshot?.mediaEducational || '',
             mediaName: selectedActivitySnapshot?.mediaName || '',
+            mediaCoview: selectedActivitySnapshot?.mediaCoview || '',
             backgroundTV: selectedActivitySnapshot?.backgroundTV || ''
         };
 

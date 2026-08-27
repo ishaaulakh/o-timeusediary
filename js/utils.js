@@ -458,6 +458,7 @@ export function createTimelineDataFrame() {
                 mediaAge: activity.mediaAge || '',
                 mediaEducational: activity.mediaEducational || '',
                 mediaName: activity.mediaName || '',
+                mediaCoview: activity.mediaCoview || '',
                 backgroundTV: activity.backgroundTV || ''
             };
             
@@ -554,6 +555,7 @@ export async function sendDataToDataPipe() {
             dataRow.mediaAge = row.mediaAge || '';
             dataRow.mediaEducational = row.mediaEducational || '';
             dataRow.mediaName = row.mediaName || '';
+            dataRow.mediaCoview = row.mediaCoview || '';
             dataRow.backgroundTV = row.backgroundTV || '';
       
       return dataRow;
