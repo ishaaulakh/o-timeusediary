@@ -19,7 +19,7 @@
     "primary": {
         "name": "Primary activity",
         "description": "What was your child doing?",
-        "mode": "single-choice",
+        "mode": "multiple-choice",
         "min_coverage": "10",
         "categories": [
           {

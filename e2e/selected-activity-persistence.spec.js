@@ -52,7 +52,7 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
     // Wait for button to be enabled (may have initial disabled state)
     await page.waitForFunction(() => {
       const btn = document.getElementById('nextBtn');
-      return btn && !btn.disabled;
+      return btn instanceof HTMLButtonElement && !btn.disabled;
     });
 
     await nextButton.click();
@@ -92,7 +92,7 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
     const nextButton = page.locator('#nextBtn');
     await page.waitForFunction(() => {
       const btn = document.getElementById('nextBtn');
-      return btn && !btn.disabled;
+      return btn instanceof HTMLButtonElement && !btn.disabled;
     });
     await nextButton.click();
     await page.waitForTimeout(500);
@@ -131,7 +131,10 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
 
     // Navigate to Timeline 2
     const nextButton = page.locator('#nextBtn');
-    await page.waitForFunction(() => !document.getElementById('nextBtn').disabled);
+    await page.waitForFunction(() => {
+      const btn = document.getElementById('nextBtn');
+      return btn instanceof HTMLButtonElement && !btn.disabled;
+    });
     await nextButton.click();
     await page.waitForTimeout(500);
 
@@ -166,7 +169,10 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
 
     // Navigate to Timeline 2
     const nextButton = page.locator('#nextBtn');
-    await page.waitForFunction(() => !document.getElementById('nextBtn').disabled);
+    await page.waitForFunction(() => {
+      const btn = document.getElementById('nextBtn');
+      return btn instanceof HTMLButtonElement && !btn.disabled;
+    });
     await nextButton.click();
     await page.waitForTimeout(500);
 
@@ -176,7 +182,10 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
 
     // Navigate back to Timeline 1
     const backButton = page.locator('#backBtn');
-    await page.waitForFunction(() => !document.getElementById('backBtn').disabled);
+    await page.waitForFunction(() => {
+      const btn = document.getElementById('backBtn');
+      return btn instanceof HTMLButtonElement && !btn.disabled;
+    });
     await backButton.click();
     await page.waitForTimeout(500);
 
@@ -207,7 +216,10 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
 
       // Navigate to next timeline
       const nextButton = page.locator('#nextBtn');
-      await page.waitForFunction(() => !document.getElementById('nextBtn').disabled);
+      await page.waitForFunction(() => {
+        const btn = document.getElementById('nextBtn');
+        return btn instanceof HTMLButtonElement && !btn.disabled;
+      });
       await nextButton.click();
       await page.waitForTimeout(500);
 
@@ -230,7 +242,10 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
 
       // Navigate to next timeline
       const nextButton = page.locator('#nextBtn');
-      await page.waitForFunction(() => !document.getElementById('nextBtn').disabled);
+      await page.waitForFunction(() => {
+        const btn = document.getElementById('nextBtn');
+        return btn instanceof HTMLButtonElement && !btn.disabled;
+      });
       await nextButton.click();
       await page.waitForTimeout(500);
 
@@ -240,8 +255,41 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
     }
   });
 
+  test('should combine activities selected from different categories', async ({ page }) => {
+    const categories = page.locator('[data-mode="multiple-choice"] .activity-category');
+    const firstActivity = categories.nth(0).locator('.activity-button').first();
+    const secondActivity = categories.nth(1).locator('.activity-button').first();
+
+    await firstActivity.click();
+    await secondActivity.click();
+
+    const selectedActivity = await page.evaluate(() => window.selectedActivity);
+    expect(selectedActivity.selections).toHaveLength(2);
+  });
+
+  test('should keep an earlier activity when a video activity is selected', async ({ page }) => {
+    await page.locator('[data-mode="multiple-choice"] .activity-button', { hasText: 'Eating/Drinking' }).click();
+    await page.locator('[data-mode="multiple-choice"] .activity-button', { hasText: 'Watched video content' }).click();
+
+    await page.locator('input[name="mediaAge"]').first().check();
+    await page.locator('#mediaNameInput').fill('Test video');
+    await page.locator('input[name="mediaEducational"]').first().check();
+    await page.locator('input[name="mediaCoview"]').first().check();
+    await page.locator('#confirmMediaInfo').click();
+
+    const selectedActivity = await page.evaluate(() => window.selectedActivity);
+    expect(selectedActivity.selections.map(
+      /** @param {{ name: string }} selection */
+      (selection) => selection.name
+    )).toEqual([
+      'Eating/Drinking',
+      'Watched video content (TV, movie, YouTube, etc.)'
+    ]);
+  });
+
   test('should maintain proper state in console logs', async ({ page }) => {
     // Listen to console logs
+    /** @type {string[]} */
     const logs = [];
     page.on('console', msg => {
       if (msg.text().includes('[ACTIVITY]') || msg.text().includes('window.selectedActivity')) {
@@ -256,7 +304,10 @@ test.describe('Selected Activity Persistence (PR #51)', () => {
 
     // Navigate
     const nextButton = page.locator('#nextBtn');
-    await page.waitForFunction(() => !document.getElementById('nextBtn').disabled);
+    await page.waitForFunction(() => {
+      const btn = document.getElementById('nextBtn');
+      return btn instanceof HTMLButtonElement && !btn.disabled;
+    });
     await nextButton.click();
     await page.waitForTimeout(500);
 

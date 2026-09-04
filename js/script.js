@@ -955,7 +955,23 @@ function renderActivities(categories, container = document.getElementById('activ
             const activitiesContainer = activityButton.closest('#activitiesContainer, #modalActivitiesContainer');
             const isMultipleChoice = activitiesContainer?.getAttribute('data-mode') === 'multiple-choice';
             const categoryButtons = activityButton.closest('.activity-category').querySelectorAll('.activity-button');
+            const allActivityButtons = activitiesContainer?.querySelectorAll('.activity-button') || [];
             const actNameLower = activity.name.toLowerCase();
+            const updateMultipleChoiceSelection = () => {
+                const selectedButtons = Array.from(allActivityButtons).filter(btn => btn.classList.contains('selected'));
+
+                if (selectedButtons.length > 0) {
+                    window.selectedActivity = {
+                        selections: selectedButtons.map(btn => btn.activitySelection || {
+                            name: btn.querySelector('.activity-text')?.textContent || btn.textContent,
+                            color: btn.style.getPropertyValue('--color')
+                        }),
+                        category: category.name
+                    };
+                } else if (!activityButton.closest('#modalActivitiesContainer')) {
+                    window.selectedActivity = null;
+                }
+            };
 
             // 1. Media Info Modal (video / games)
             if (actNameLower.includes('watched video') || actNameLower.includes('played games')) {
@@ -978,17 +994,24 @@ function renderActivities(categories, container = document.getElementById('activ
                         const selectedCoview = document.querySelector('input[name="mediaCoview"]:checked');
 
                         if (selectedAge && selectedEducational && mediaName) {
-                            categoryButtons.forEach(b => b.classList.remove('selected'));
-                            window.selectedActivity = {
+                            activityButton.activitySelection = {
                                 name: activity.name,
                                 color: activity.color,
-                                category: category.name,
                                 mediaAge: selectedAge.value,
                                 mediaEducational: selectedEducational.value,
                                 mediaName: mediaName,
                                 mediaCoview: selectedCoview.value
                             };
                             activityButton.classList.add('selected');
+                            if (isMultipleChoice) {
+                                updateMultipleChoiceSelection();
+                            } else {
+                                categoryButtons.forEach(b => b.classList.remove('selected'));
+                                window.selectedActivity = {
+                                    ...activityButton.activitySelection,
+                                    category: category.name
+                                };
+                            }
                             mediaInfoModal.style.display = 'none';
                             const actModal = document.getElementById('activitiesModal');
                             if (actModal) actModal.style.display = 'none';
@@ -1024,14 +1047,21 @@ function renderActivities(categories, container = document.getElementById('activ
                     const handleBackgroundTVInfo = () => {
                         const backgroundTV = tvInput ? tvInput.value.trim() : '';
                         if (backgroundTV) {
-                            categoryButtons.forEach(b => b.classList.remove('selected'));
-                            window.selectedActivity = {
+                            activityButton.activitySelection = {
                                 name: activity.name,
                                 color: activity.color,
-                                category: category.name,
                                 backgroundTV: backgroundTV
                             };
                             activityButton.classList.add('selected');
+                            if (isMultipleChoice) {
+                                updateMultipleChoiceSelection();
+                            } else {
+                                categoryButtons.forEach(b => b.classList.remove('selected'));
+                                window.selectedActivity = {
+                                    ...activityButton.activitySelection,
+                                    category: category.name
+                                };
+                            }
                             backgroundTVModal.style.display = 'none';
                             const actModal = document.getElementById('activitiesModal');
                             if (actModal) actModal.style.display = 'none';
@@ -1111,21 +1141,7 @@ function renderActivities(categories, container = document.getElementById('activ
             // 5. Regular Activity Selection (Single & Multiple Choice)
             if (isMultipleChoice) {
                 activityButton.classList.toggle('selected');
-                const selectedButtons = Array.from(categoryButtons).filter(btn => btn.classList.contains('selected'));
-
-                if (selectedButtons.length > 0) {
-                    window.selectedActivity = {
-                        selections: selectedButtons.map(btn => ({
-                            name: btn.querySelector('.activity-text')?.textContent || btn.textContent,
-                            color: btn.style.getPropertyValue('--color')
-                        })),
-                        category: category.name
-                    };
-                } else {
-                    if (!activityButton.closest('#modalActivitiesContainer')) {
-                        window.selectedActivity = null;
-                    }
-                }
+                updateMultipleChoiceSelection();
             } else {
                 categoryButtons.forEach(b => b.classList.remove('selected'));
                 window.selectedActivity = {
@@ -2107,6 +2123,8 @@ function initTimelineInteraction(timeline) {
         timeLabel.style.display = 'block'; // Ensure the new label is visible
 
         const selectedActivitySnapshot = window.selectedActivity;
+        const selectedMedia = selectedActivitySnapshot?.selections?.find(selection => selection.mediaName) || {};
+        const selectedBackground = selectedActivitySnapshot?.selections?.find(selection => selection.backgroundTV) || {};
 
         // Deselect the activity button after successful placement
         document.querySelectorAll('.activity-button').forEach(btn => btn.classList.remove('selected'));
@@ -2135,11 +2153,11 @@ function initTimelineInteraction(timeline) {
             count: parseInt(currentBlock.dataset.count) || 1,
             startMinutes,
             endMinutes,
-            mediaAge: selectedActivitySnapshot?.mediaAge || '',
-            mediaEducational: selectedActivitySnapshot?.mediaEducational || '',
-            mediaName: selectedActivitySnapshot?.mediaName || '',
-            mediaCoview: selectedActivitySnapshot?.mediaCoview || '',
-            backgroundTV: selectedActivitySnapshot?.backgroundTV || ''
+            mediaAge: selectedActivitySnapshot?.mediaAge || selectedMedia.mediaAge || '',
+            mediaEducational: selectedActivitySnapshot?.mediaEducational || selectedMedia.mediaEducational || '',
+            mediaName: selectedActivitySnapshot?.mediaName || selectedMedia.mediaName || '',
+            mediaCoview: selectedActivitySnapshot?.mediaCoview || selectedMedia.mediaCoview || '',
+            backgroundTV: selectedActivitySnapshot?.backgroundTV || selectedBackground.backgroundTV || ''
         };
 
         if (Array.isArray(selectedActivitySnapshot?.selections)) {
