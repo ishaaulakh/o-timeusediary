@@ -8,6 +8,10 @@
     "instructions": true,
     "primary_redirect_url": "pages/thank-you.html",
     "fallbackToCSV": true,
+    "googleDrive": {
+      "appsScriptUrl": "https://script.google.com/macros/s/AKfycbyEL3bCjwHJCn0WTE3cbaJVWBsOFwsUlvfjSmRAqDnlAv3sOSSZs0jabLWJbhCwZA7z/exec",
+      "recaptchaSiteKey": "6LdSihguAAAAAFrR52rOnc-ivWes4obHMy6K5RDb"
+    },
     "accessibility": {
       "enableReducedMotion": false,
       "enableHighContrast": false,

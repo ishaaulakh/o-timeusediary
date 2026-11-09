@@ -894,32 +894,152 @@ function downloadCSV(csvString, filename) {
     document.body.removeChild(link);
 }
 
+function makeCsvFilename(dataFrame) {
+    const participantId = String(dataFrame[0]?.pid || 'participant')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .slice(0, 64);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    return `timeline_${participantId}_${timestamp}.csv`;
+}
+
+let recaptchaScriptPromise = null;
+
+function loadRecaptcha(siteKey) {
+    if (window.grecaptcha?.execute) return Promise.resolve();
+    if (recaptchaScriptPromise) return recaptchaScriptPromise;
+
+    recaptchaScriptPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = resolve;
+        script.onerror = () => {
+            recaptchaScriptPromise = null;
+            reject(new Error('Could not load Google reCAPTCHA.'));
+        };
+        document.head.appendChild(script);
+    });
+
+    return recaptchaScriptPromise;
+}
+
+async function getRecaptchaToken(siteKey) {
+    await loadRecaptcha(siteKey);
+    return new Promise((resolve, reject) => {
+        window.grecaptcha.ready(async () => {
+            try {
+                resolve(await window.grecaptcha.execute(siteKey, { action: 'diary_submit' }));
+            } catch (error) {
+                reject(new Error('Could not verify this submission. Please try again.'));
+            }
+        });
+    });
+}
+
+async function postCsvToGoogleDrive(config, csv, filename) {
+    if (!config?.appsScriptUrl || !config?.recaptchaSiteKey) {
+        throw new Error('Google Drive submission is not configured. Please contact the study team.');
+    }
+
+    const endpoint = new URL(config.appsScriptUrl);
+    if (endpoint.protocol !== 'https:' || endpoint.hostname !== 'script.google.com') {
+        throw new Error('The Google Drive upload URL is invalid.');
+    }
+
+    const requestId = window.crypto?.randomUUID?.()
+        || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const captchaToken = await getRecaptchaToken(config.recaptchaSiteKey);
+
+    return new Promise((resolve, reject) => {
+        const frame = document.createElement('iframe');
+        frame.name = `drive-upload-${requestId}`;
+        frame.title = 'Google Drive upload';
+        frame.hidden = true;
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = endpoint.href;
+        form.target = frame.name;
+        form.hidden = true;
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'payload';
+        input.value = JSON.stringify({ requestId, captchaToken, filename, csv });
+        form.appendChild(input);
+
+        const cleanup = () => {
+            clearTimeout(timeout);
+            window.removeEventListener('message', handleMessage);
+            form.remove();
+            frame.remove();
+        };
+
+        const handleMessage = (event) => {
+            if (event.source !== frame.contentWindow
+                || event.data?.type !== 'otud-google-drive-result'
+                || event.data?.requestId !== requestId) return;
+
+            cleanup();
+            if (event.data.success) {
+                resolve({ filename });
+            } else {
+                reject(new Error(event.data.message || 'Google Drive upload failed.'));
+            }
+        };
+
+        const timeout = setTimeout(() => {
+            cleanup();
+            reject(new Error('Google Drive did not confirm the upload. Please try again.'));
+        }, 45000);
+
+        window.addEventListener('message', handleMessage);
+        document.body.append(frame, form);
+        try {
+            form.submit();
+        } catch (error) {
+            cleanup();
+            reject(new Error('Could not send the CSV to Google Drive.'));
+        }
+    });
+}
+
 /**
- * sendData function to either send data via DataPipe or download as CSV locally.
- * 
- * @param {Object} options - Options to control the sending behavior.
- *   Use { mode: 'datapipe' } to upload via DataPipe API,
- *   or { mode: 'csv' } to trigger a CSV file download.
- *   During development, the default is 'datapipe' mode.
+ * Send data to Google Drive, DataPipe, or a local CSV download.
+ * @param {Object} options - Sending mode; defaults to the configured Google Drive upload.
  */
-export async function sendData(options = { mode: 'datapipe' }) {
-    // Sync URL parameters before sending data
+export async function sendData(options = { mode: 'google-drive' }) {
     syncURLParamsToStudy();
-    
+
     if (options.mode === 'datapipe') {
-        // Call the function that sends data to DataPipe
         return await sendDataToDataPipe();
+    } else if (options.mode === 'google-drive') {
+        try {
+            const dataFrame = createTimelineDataFrame();
+            const csv = convertArrayToCSV(dataFrame);
+            const filename = makeCsvFilename(dataFrame);
+            await postCsvToGoogleDrive(
+                window.timelineManager?.general?.googleDrive,
+                csv,
+                filename
+            );
+            hideLoadingModal();
+            return { success: true, filename };
+        } catch (error) {
+            console.error('Error uploading CSV to Google Drive:', error);
+            hideLoadingModal();
+            return { success: false, error: error.message };
+        }
     } else if (options.mode === 'csv') {
-        // Create timeline data frame and convert to CSV for download
         const dataFrame = createTimelineDataFrame();
         const csv = convertArrayToCSV(dataFrame);
-        downloadCSV(csv, 'timeline_data.csv');
-        
-        // Hide loading modal after CSV download
+        downloadCSV(csv, makeCsvFilename(dataFrame));
         hideLoadingModal();
-    } else {
-        throw new Error(`Unsupported send mode: ${options.mode}`);
+        return { success: true };
     }
+
+    throw new Error(`Unsupported send mode: ${options.mode}`);
 }
 
 export function checkAndRequestPID() {

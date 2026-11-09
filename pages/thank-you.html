@@ -180,19 +180,26 @@
         </p>
     </main>
 
-    <script src="../i18n.js"></script>
-    <script>
+    <script type="module">
+        import i18n from '../js/i18n.js';
+
         // Initialize i18n when page loads
         document.addEventListener('DOMContentLoaded', async () => {
-            // Get language from URL parameters or default to 'en'
             const urlParams = new URLSearchParams(window.location.search);
-            const language = urlParams.get('lang') || 'en';
-            
-            // Initialize i18n
-            await window.i18n.init(language);
-            
-            // Apply translations to the page
-            window.i18n.applyTranslations();
+            let language = urlParams.get('lang') || 'en';
+
+            try {
+                const response = await fetch('../settings/activities.json');
+                if (response.ok) {
+                    const settings = await response.json();
+                    language = urlParams.get('lang') || settings.general?.language || 'en';
+                }
+            } catch (error) {
+                console.warn('Could not load study language, defaulting to English:', error);
+            }
+
+            await i18n.init(language);
+            i18n.applyTranslations();
         });
     </script>
 </body>

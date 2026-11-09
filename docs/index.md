@@ -8,6 +8,7 @@ A web-based research tool for collecting and visualizing daily activities
 - [Responsive Layouts](responsive-layouts.md)
 - [GitHub Pages Deployment](deployment.md)
 - [OSF Backend Setup](osf-setup.md)
+- [Anonymous Google Drive Upload](google-drive-setup.md)
 - [Activities Configuration](activities-config.md)
 - [URL Parameters](url-parameters.md)
 - [Data Structure & Export](data-structure.md)
@@ -35,7 +36,7 @@ O-TUD is a client-side web application designed for time-use research studies. I
 The application is built with vanilla JavaScript (ES6+ modules) and designed for modern browsers. It uses:
 
 - **Frontend:** Pure client-side JavaScript, HTML5, CSS3
-- **Data Storage:** OSF via JSPsych DataPipe
+- **Data Storage:** Google Drive via Apps Script or OSF via JSPsych DataPipe
 - **Deployment:** Static hosting (GitHub Pages, etc.)
 
 ## Research Applications

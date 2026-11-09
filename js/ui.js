@@ -313,10 +313,25 @@ function createModal() {
             confirmationModal.style.display = 'none';
             showLoadingModal();
 
-            const result = await sendData({ mode: 'datapipe' });
+            const result = await sendData({ mode: 'google-drive' });
             if (!result?.success) {
                 hideLoadingModal();
                 showToast(result?.error || 'Submission failed. Please try again.', 'error', 4000);
+                return;
+            }
+
+            await onSubmitSuccess();
+            const redirectUrl = window.timelineManager?.general?.primary_redirect_url;
+            if (redirectUrl && !redirectUrl.startsWith('http')) {
+                window.location.href = redirectUrl;
+            } else if (redirectUrl) {
+                const currentParams = new URLSearchParams(window.location.search);
+                const separator = redirectUrl.includes('?') ? '&' : '?';
+                window.location.href = redirectUrl
+                    + (currentParams.toString() ? separator + currentParams.toString() : '');
+            } else {
+                hideLoadingModal();
+                showToast('Diary saved to Google Drive.', 'success', 4000);
             }
         });
 

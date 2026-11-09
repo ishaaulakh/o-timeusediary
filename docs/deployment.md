@@ -22,8 +22,10 @@ Before you begin, ensure you have:
 
 - A GitHub account (free at github.com)
 - Basic familiarity with Git and GitHub
-- A JSPsych DataPipe account and experiment ID (see OSF Setup guide)
+- A configured data destination: anonymous Google Drive upload or JSPsych DataPipe
 - Your study activities configured (see Activities Configuration guide)
+
+For Google Drive uploads, complete the [Anonymous Google Drive Upload](google-drive-setup.md) setup before deploying. DataPipe configuration is covered in the [OSF Setup guide](osf-setup.md).
 
 ## Step-by-Step Deployment
 
@@ -65,7 +67,11 @@ Edit `settings/activities.json` with your study configuration:
     "language": "en",
     "instructions": true,
     "primary_redirect_url": "pages/thank-you.html",
-    "fallbackToCSV": true
+    "fallbackToCSV": true,
+    "googleDrive": {
+      "appsScriptUrl": "YOUR_APPS_SCRIPT_WEB_APP_URL",
+      "recaptchaSiteKey": "YOUR_RECAPTCHA_SITE_KEY"
+    }
   },
   "timeline": {
     // Your timeline configuration
