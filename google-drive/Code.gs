@@ -6,6 +6,7 @@ function doGet() {
   const properties = PropertiesService.getScriptProperties();
   const status = {
     status: 'ready',
+    responseProtocol: 2,
     driveFolderConfigured: Boolean(properties.getProperty('DRIVE_FOLDER_ID')),
     recaptchaSecretConfigured: Boolean(properties.getProperty('RECAPTCHA_SECRET_KEY')),
     allowedHostnamesConfigured: Boolean(properties.getProperty('ALLOWED_HOSTNAMES'))
@@ -94,6 +95,17 @@ function resultPage_(requestId, success, message) {
   }).replace(/</g, '\\u003c');
 
   return HtmlService.createHtmlOutput(
-    `<!doctype html><script>window.top.postMessage(${result}, '*');</script>`
+    `<!doctype html><script>
+      const result = ${result};
+      function notifyParent() {
+        try { window.parent.postMessage(result, '*'); } catch (error) {}
+        if (window.top !== window.parent) {
+          try { window.top.postMessage(result, '*'); } catch (error) {}
+        }
+      }
+      notifyParent();
+      setTimeout(notifyParent, 250);
+      setTimeout(notifyParent, 1000);
+    </script>`
   ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }

@@ -49,7 +49,7 @@ The reCAPTCHA badge is displayed by Google. Do not remove it or put the secret k
 
 ## 5. Test the Upload
 
-After deploying the current script version, open the `/exec` URL in a browser. It should return a JSON status with `"status":"ready"` and all three `...Configured` values set to `true`. If it asks you to sign in or shows an access error, update the web app deployment so it executes as you and is available to anyone, then deploy a new version.
+After deploying the current script version, open the `/exec` URL in a browser. It should return a JSON status with `"status":"ready"`, `"responseProtocol":2`, and all three `...Configured` values set to `true`. If it asks you to sign in or shows an access error, update the web app deployment so it executes as you and is available to anyone, then deploy a new version.
 
 Run the app on an allowed hostname, complete a test diary, and submit it. Confirm that a uniquely named `timeline_...csv` appears in the configured folder. Check **Apps Script > Executions** if an upload fails. Test with non-sensitive data before collecting study responses.
 
