@@ -977,8 +977,7 @@ async function postCsvToGoogleDrive(config, csv, filename) {
         };
 
         const handleMessage = (event) => {
-            if (event.source !== frame.contentWindow
-                || event.data?.type !== 'otud-google-drive-result'
+            if (event.data?.type !== 'otud-google-drive-result'
                 || event.data?.requestId !== requestId) return;
 
             cleanup();

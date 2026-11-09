@@ -94,6 +94,6 @@ function resultPage_(requestId, success, message) {
   }).replace(/</g, '\\u003c');
 
   return HtmlService.createHtmlOutput(
-    `<!doctype html><script>window.parent.postMessage(${result}, '*');</script>`
+    `<!doctype html><script>window.top.postMessage(${result}, '*');</script>`
   ).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
