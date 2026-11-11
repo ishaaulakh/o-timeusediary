@@ -459,7 +459,9 @@ export function createTimelineDataFrame() {
                 mediaEducational: activity.mediaEducational || '',
                 mediaName: activity.mediaName || '',
                 mediaCoview: activity.mediaCoview || '',
-                backgroundTV: activity.backgroundTV || ''
+                backgroundTV: activity.backgroundTV || '',
+                childAge: studyParams.childAge || '',
+                childSex: studyParams.childSex || ''
             };
             
             // Only add study params if they exist
@@ -550,7 +552,9 @@ export async function sendDataToDataPipe() {
         PROLIFIC_PID: studyData.PROLIFIC_PID || null,
         STUDY_ID: studyData.STUDY_ID || null,
                 SESSION_ID: session_id,
-                typicalDay: studyData.typicalday === 'typical' ? 'yes' : studyData.typicalday === 'non-typical' ? 'no' : ''
+                typicalDay: studyData.typicalday === 'typical' ? 'yes' : studyData.typicalday === 'non-typical' ? 'no' : '',
+                childAge: studyData.childAge || '',
+                childSex: studyData.childSex || ''
       };
             dataRow.mediaAge = row.mediaAge || '';
             dataRow.mediaEducational = row.mediaEducational || '';

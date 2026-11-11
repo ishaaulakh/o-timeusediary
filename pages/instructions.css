@@ -340,6 +340,35 @@ li {
     line-height: 1.55;
 }
 
+.child-details-fields {
+    display: grid;
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
+}
+
+.child-details-fields label {
+    color: var(--text-color);
+    font-weight: var(--font-weight-medium);
+}
+
+.child-details-fields input,
+.child-details-fields select {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    color: var(--text-color);
+    font: inherit;
+}
+
+.child-details-fields input:focus,
+.child-details-fields select:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
 .typicalday-modal-actions {
     display: flex;
     flex-direction: column;

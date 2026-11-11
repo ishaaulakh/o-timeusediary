@@ -76,6 +76,17 @@
       "message": "Une partie importante de ce projet consiste à découvrir comment les enfants passent leur temps pendant la semaine. Hier était-il un jour de semaine typique pour vous et votre enfant ? Une journée atypique peut inclure une fermeture de l'école, des vacances ou le fait d'être malade à la maison.",
       "yes": "Oui, hier était typique.",
       "no": "Non, hier était atypique."
+    },
+    "childDetails": {
+      "title": "Parlez-nous de votre enfant",
+      "message": "Veuillez indiquer l'âge et le sexe de votre enfant.",
+      "ageLabel": "Âge",
+      "sexLabel": "Sexe",
+      "selectSex": "Sélectionnez le sexe",
+      "male": "Masculin",
+      "female": "Féminin",
+      "other": "Autre",
+      "continue": "Continuer"
     }
   },
   "messages": {

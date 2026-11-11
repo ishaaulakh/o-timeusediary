@@ -9,7 +9,7 @@
     "primary_redirect_url": "pages/thank-you.html",
     "fallbackToCSV": true,
     "googleDrive": {
-      "appsScriptUrl": "https://script.google.com/macros/s/AKfycbxjQfw_cI4teI25MPepUCwTUr2mqMD38MwpQrnUadqfAaI_ld3SSqOq1UYwTHjTyvSi/exec",
+      "appsScriptUrl": "https://script.google.com/macros/s/AKfycbytJf1WWtkZHZrOjzIlBNCZXKiTvw0QkF_GrQpCs10cqNoeqNvY0AIumtV4_HeN146u/exec",
       "recaptchaSiteKey": "6LdSihguAAAAAFrR52rOnc-ivWes4obHMy6K5RDb"
     },
     "accessibility": {

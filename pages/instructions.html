@@ -34,6 +34,27 @@
         </button>
     </nav>
 
+    <div id="childDetailsModal" class="typicalday-modal-overlay" role="presentation" aria-hidden="true">
+        <form id="childDetailsForm" class="typicalday-modal" role="dialog" aria-modal="true" aria-labelledby="childDetailsTitle" aria-describedby="childDetailsDescription" tabindex="-1">
+            <h2 id="childDetailsTitle" data-i18n="modals.childDetails.title">Tell us about your child</h2>
+            <p id="childDetailsDescription" data-i18n="modals.childDetails.message">Please provide your child's age and sex.</p>
+            <div class="child-details-fields">
+                <label for="childAge" data-i18n="modals.childDetails.ageLabel">Age</label>
+                <input id="childAge" name="childAge" type="number" min="0" step="1" required>
+                <label for="childSex" data-i18n="modals.childDetails.sexLabel">Sex</label>
+                <select id="childSex" name="childSex" required>
+                    <option value="" data-i18n="modals.childDetails.selectSex">Select sex</option>
+                    <option value="male" data-i18n="modals.childDetails.male">Male</option>
+                    <option value="female" data-i18n="modals.childDetails.female">Female</option>
+                    <option value="other" data-i18n="modals.childDetails.other">Other</option>
+                </select>
+            </div>
+            <div class="typicalday-modal-actions">
+                <button id="childDetailsContinue" class="btn save-btn" type="submit" data-i18n="modals.childDetails.continue">Continue</button>
+            </div>
+        </form>
+    </div>
+
     <div id="typicalDayModal" class="typicalday-modal-overlay" role="presentation" aria-hidden="true">
         <div class="typicalday-modal" role="dialog" aria-modal="true" aria-labelledby="typicalDayTitle" aria-describedby="typicalDayDescription" tabindex="-1">
             <h2 id="typicalDayTitle" data-i18n="modals.typicalDay.title">Was yesterday a typical weekday?</h2>

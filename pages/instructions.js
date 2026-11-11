@@ -47,6 +47,9 @@ function updateLayout() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const continueBtn = document.getElementById('continueBtn');
+    const childDetailsModal = document.getElementById('childDetailsModal');
+    const childDetailsForm = document.getElementById('childDetailsForm');
+    const childDetailsDialog = childDetailsModal?.querySelector('.typicalday-modal');
     const typicalDayModal = document.getElementById('typicalDayModal');
     const typicalDayDialog = typicalDayModal?.querySelector('.typicalday-modal');
     const progressBar = document.getElementById('progressBar');
@@ -122,16 +125,39 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Continue button found, adding click handler');
         continueBtn.addEventListener('click', () => {
             console.log('Continue button clicked');
-            if (!typicalDayModal || !typicalDayDialog) return;
+            if (!childDetailsModal || !childDetailsDialog) return;
 
-            typicalDayModal.classList.add('is-visible');
-            typicalDayModal.setAttribute('aria-hidden', 'false');
+            const params = new URLSearchParams(window.location.search);
+            const ageInput = document.getElementById('childAge');
+            const sexInput = document.getElementById('childSex');
+            if (ageInput instanceof HTMLInputElement) ageInput.value = params.get('childAge') || '';
+            if (sexInput instanceof HTMLSelectElement) sexInput.value = params.get('childSex') || '';
+            childDetailsModal.classList.add('is-visible');
+            childDetailsModal.setAttribute('aria-hidden', 'false');
             document.body.classList.add('modal-open');
-            typicalDayDialog.focus();
+            childDetailsDialog.focus();
         });
     } else {
         console.error('Continue button not found!');
     }
+
+    childDetailsForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!(childDetailsForm instanceof HTMLFormElement) || !childDetailsForm.reportValidity()) return;
+
+        const formData = new FormData(childDetailsForm);
+        const params = new URLSearchParams(window.location.search);
+        params.set('childAge', String(formData.get('childAge')));
+        params.set('childSex', String(formData.get('childSex')));
+        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
+
+        childDetailsModal?.classList.remove('is-visible');
+        childDetailsModal?.setAttribute('aria-hidden', 'true');
+        if (!typicalDayModal || !typicalDayDialog) return;
+        typicalDayModal.classList.add('is-visible');
+        typicalDayModal.setAttribute('aria-hidden', 'false');
+        typicalDayDialog.focus();
+    });
 
     typicalDayModal?.querySelectorAll('[data-typical-day]').forEach((button) => {
         button.addEventListener('click', () => {
